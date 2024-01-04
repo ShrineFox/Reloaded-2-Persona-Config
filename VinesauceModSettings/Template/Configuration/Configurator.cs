@@ -1,7 +1,7 @@
-﻿using NaoSmiley.Configuration;
+﻿using VinesauceModSettings.Configuration;
 using Reloaded.Mod.Interfaces;
 
-namespace NaoSmiley.Template.Configuration
+namespace VinesauceModSettings.Template.Configuration
 {
 	public class Configurator : IConfiguratorV3
 	{

@@ -1,6 +1,6 @@
-﻿using NaoSmiley.Configuration;
+﻿using VinesauceModSettings.Configuration;
 
-namespace NaoSmiley.Template
+namespace VinesauceModSettings.Template
 {
 	/// <summary>
 	/// Base class for implementing mod functionality.

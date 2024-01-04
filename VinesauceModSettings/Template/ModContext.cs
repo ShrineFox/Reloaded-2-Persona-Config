@@ -1,8 +1,8 @@
-﻿using NaoSmiley.Configuration;
+﻿using VinesauceModSettings.Configuration;
 using Reloaded.Mod.Interfaces;
 using IReloadedHooks = Reloaded.Hooks.ReloadedII.Interfaces.IReloadedHooks;
 
-namespace NaoSmiley.Template
+namespace VinesauceModSettings.Template
 {
 	/// <summary>
 	/// Represents information passed in from the mod loader template to the implementing mod.

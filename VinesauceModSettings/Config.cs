@@ -1,11 +1,11 @@
-﻿using NaoSmiley.Template.Configuration;
+﻿using VinesauceModSettings.Template.Configuration;
 using Reloaded.Mod.Interfaces.Structs;
 using System.ComponentModel;
 using CriFs.V2.Hook;
 using CriFs.V2.Hook.Interfaces;
 using System.Reflection;
 
-namespace NaoSmiley.Configuration
+namespace VinesauceModSettings.Configuration
 {
 	public class Config : Configurable<Config>
 	{
@@ -29,11 +29,17 @@ namespace NaoSmiley.Configuration
             The `DefaultValue` attribute is used as part of the `Reset` button in Reloaded-Launcher.
         */
 
-        [Category("Test")]
-        [DisplayName("Test")]
-		[Description("Bool example")]
-		[DefaultValue(true)]
-		public bool Test1 { get; set; } = true; // bool used in Mod.CS, not the folder name, but the bool name
+        [Category("Event Skip")]
+        [DisplayName("Skip Events in 20 Minute Mode")]
+        [Description("Enable this to remove all event dialog during 20 Minute Mode gameplay.")]
+        [DefaultValue(true)]
+        public bool EventSkip { get; set; } = true; // bool used in Mod.CS, not the folder name, but the bool name
+
+        [Category("UI Artwork")]
+        [DisplayName("Use NeonWillowLeaf's Scoot All Out Attack")]
+        [Description("Enable this option to see NeonWillowLeaf's Scoot AoA in place of the default one by CheesyDraws.")]
+        [DefaultValue(false)]
+        public bool NeonWillowLeaf { get; set; } = false; // bool used in Mod.CS, not the folder name, but the bool name
     }
 
     /// <summary>

@@ -1,6 +1,6 @@
 ﻿using System.Diagnostics;
 
-namespace NaoSmiley.Template.Configuration
+namespace VinesauceModSettings.Template.Configuration
 {
 	public class Utilities
 	{

@@ -1,5 +1,5 @@
-﻿using NaoSmiley.Configuration;
-using NaoSmiley.Template;
+﻿using VinesauceModSettings.Configuration;
+using VinesauceModSettings.Template;
 using Reloaded.Hooks.ReloadedII.Interfaces;
 using Reloaded.Mod.Interfaces;
 using CriFs.V2.Hook;
@@ -12,7 +12,7 @@ using BGME.Framework.Interfaces;
 using BF.File.Emulator;
 using BF.File.Emulator.Interfaces;
 
-namespace NaoSmiley
+namespace VinesauceModSettings
 {
 	/// <summary>
 	/// Your mod logic goes here.
@@ -103,28 +103,34 @@ namespace NaoSmiley
             // Set configuration options - obviously you don't need all of these, pick and choose what you need!
 
             // criFS
-            if (_configuration.Test1)
+            if (_configuration.NeonWillowLeaf)
 			{
-				criFsApi.AddProbingPath("Test"); // folder path. place a subfolder inside and then start your file path. for example: "(mod folder)\Test\(any name)\..."
+				criFsApi.AddProbingPath("NeonWillowLeaf"); // folder path. place a subfolder inside and then start your file path. for example: "(mod folder)\Test\(any name)\..."
 			}
+            if (_configuration.EventSkip)
+            {
+                criFsApi.AddProbingPath("EventSkip"); // folder path. place a subfolder inside and then start your file path. for example: "(mod folder)\Test\(any name)\..."
+            }
 
+            /*
             // PAK Emulator
-            if (_configuration.Test1)
+            if (_configuration.NeonWillowLeaf)
 			{
-				_PakEmulator.AddDirectory(Path.Combine(modDir, "Test")); // folder path. immediately start your file path inside this folder. for example: "(mod folder)\Test\..."
+				_PakEmulator.AddDirectory(Path.Combine(modDir, "NeonWillowLeaf")); // folder path. immediately start your file path inside this folder. for example: "(mod folder)\Test\..."
             }
 
             // BF Emulator
-            if (_configuration.Test1)
+            if (_configuration.NeonWillowLeaf)
             {
-                _BfEmulator.AddDirectory(Path.Combine(modDir, "Test")); // folder path. immediately start your file path inside this folder. for example: "(mod folder)\Test\..."
+                _BfEmulator.AddDirectory(Path.Combine(modDir, "NeonWillowLeaf")); // folder path. immediately start your file path inside this folder. for example: "(mod folder)\Test\..."
             }
 
             // BGME
-            if (_configuration.Test1)
+            if (_configuration.NeonWillowLeaf)
             {
-				_BGME.AddFolder(Path.Combine(modDir, "Test")); // folder path. immediately start your file path inside this folder. for example: "(mod folder)\Test\..."
+				_BGME.AddFolder(Path.Combine(modDir, "NeonWillowLeaf")); // folder path. immediately start your file path inside this folder. for example: "(mod folder)\Test\..."
             }
+			*/
         }
 	
 		#region Standard Overrides
