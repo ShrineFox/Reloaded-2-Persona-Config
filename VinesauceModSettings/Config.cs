@@ -9,7 +9,7 @@ namespace VinesauceModSettings.Configuration
 {
 	public class Config : Configurable<Config>
 	{
-		/*
+        /*
             User Properties:
                 - Please put all of your configurable properties here.
 
@@ -29,11 +29,18 @@ namespace VinesauceModSettings.Configuration
             The `DefaultValue` attribute is used as part of the `Reset` button in Reloaded-Launcher.
         */
 
-        [Category("Event Skip")]
-        [DisplayName("Skip Events in 20 Minute Mode")]
-        [Description("Enable this to remove all event dialog during 20 Minute Mode gameplay.")]
+        [Category("New Story Mode")]
+        [DisplayName("Replace Story Events")]
+        [Description("Skip the game's original story events and use new material.")]
         [DefaultValue(true)]
         public bool EventSkip { get; set; } = true; // bool used in Mod.CS, not the folder name, but the bool name
+
+        [Category("Chat Messages")]
+        [DisplayName("Randomize Chat Messages")]
+        [Description("Re-order chat messages every time you launch the game.")]
+        [DefaultValue(false)]
+        public bool RandomizeChatMsgs { get; set; } = true; // bool used in Mod.CS, not the folder name, but the bool name
+
 
         [Category("UI Artwork")]
         [DisplayName("Use NeonWillowLeaf's Scoot All Out Attack")]

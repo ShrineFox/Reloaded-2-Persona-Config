@@ -11,6 +11,7 @@ using BGME.Framework;
 using BGME.Framework.Interfaces;
 using BF.File.Emulator;
 using BF.File.Emulator.Interfaces;
+using System.Diagnostics;
 
 namespace VinesauceModSettings
 {
@@ -61,17 +62,17 @@ namespace VinesauceModSettings
 
 			var modDir = _modLoader.GetDirectoryForModId(_modConfig.ModId); // modDir variable for file emulation
 
-			// For more information about this template, please see
-			// https://reloaded-project.github.io/Reloaded-II/ModTemplate/
+            // For more information about this template, please see
+            // https://reloaded-project.github.io/Reloaded-II/ModTemplate/
 
-			// If you want to implement e.g. unload support in your mod,
-			// and some other neat features, override the methods in ModBase.
+            // If you want to implement e.g. unload support in your mod,
+            // and some other neat features, override the methods in ModBase.
 
-			// TODO: Implement some mod logic
+            // TODO: Implement some mod logic
 
-			// Define controllers and other variables, set warning messages
-	
-			var criFsController = _modLoader.GetController<ICriFsRedirectorApi>();
+            // Define controllers and other variables, set warning messages
+
+            var criFsController = _modLoader.GetController<ICriFsRedirectorApi>();
 			if (criFsController == null || !criFsController.TryGetTarget(out var criFsApi))
 			{
 				_logger.WriteLine($"Something in CriFS shit its pants! Normal files will not load properly!", System.Drawing.Color.Red);
@@ -118,13 +119,20 @@ namespace VinesauceModSettings
 			{
 				_PakEmulator.AddDirectory(Path.Combine(modDir, "NeonWillowLeaf")); // folder path. immediately start your file path inside this folder. for example: "(mod folder)\Test\..."
             }
+            */
 
             // BF Emulator
-            if (_configuration.NeonWillowLeaf)
+            if (_configuration.EventSkip)
             {
-                _BfEmulator.AddDirectory(Path.Combine(modDir, "NeonWillowLeaf")); // folder path. immediately start your file path inside this folder. for example: "(mod folder)\Test\..."
+                _BfEmulator.AddDirectory(Path.Combine(modDir, "EventSkip")); // folder path. immediately start your file path inside this folder. for example: "(mod folder)\Test\..."
             }
 
+            if (_configuration.RandomizeChatMsgs)
+            {
+                RewriteChatMessages($"{Path.GetDirectoryName(System.Reflection.Assembly.GetExecutingAssembly().Location)}\\P5REssentials\\CPK\\CHAT.CPK\\BATTLE\\MESSAGE\\EN\\chat.txt");
+            }
+
+            /*
             // BGME
             if (_configuration.NeonWillowLeaf)
             {
@@ -132,9 +140,68 @@ namespace VinesauceModSettings
             }
 			*/
         }
-	
-		#region Standard Overrides
-	public override void ConfigurationUpdated(Config configuration)
+
+        private void RewriteChatMessages(string txtPath)
+        {
+            if (File.Exists(txtPath))
+            {
+                var chatLines = File.ReadAllLines(txtPath);
+                string txtDir = Path.GetDirectoryName(txtPath);
+
+                foreach (var msgPath in Directory.GetFiles(txtDir, "*.msg", SearchOption.TopDirectoryOnly))
+                {
+                    string[] msgLines = File.ReadAllLines(msgPath);
+                    for (int i = 0; i < msgLines.Count(); i++)
+                    {
+                        if (msgLines[i].StartsWith("[s]"))
+                        {
+                            Random random = new Random();
+                            string splitBefore = msgLines[i].SplitAtOccurence(']', 2)[0] + "]";
+                            msgLines[i] = splitBefore + chatLines[random.Next(0, chatLines.Length - 1)] + "[n][f 1 6 65534][e]";
+                        }
+                    }
+                    File.WriteAllLines(msgPath, msgLines);
+                    _logger.WriteLine($"Finished randomizing lines in:\n\"{msgPath}\"", System.Drawing.Color.Green);
+                }
+                CompileNaviMSGsToBMD(txtDir);
+            }
+            else
+                _logger.WriteLine($"Failed to randomize chat messages, could not locate file:\n\"{Path.GetFullPath(txtPath)}\"", System.Drawing.Color.Red);
+        }
+
+        private void CompileNaviMSGsToBMD(string txtDir)
+        {
+            string compilerPathTxt = Path.Combine(txtDir, "AtlusScriptCompilerPath.txt");
+            if (File.Exists(compilerPathTxt))
+            {
+                string compilerPath = File.ReadAllText(compilerPathTxt);
+                if (!File.Exists(compilerPath))
+                {
+                    _logger.WriteLine($"Failed to recompile chat messages, could not locate file:\n\"{Path.GetFullPath(compilerPath)}\"", System.Drawing.Color.Red);
+                    return;
+                }
+
+                foreach (var msgPath in Directory.GetFiles(txtDir, "*.msg", SearchOption.TopDirectoryOnly))
+                {
+                    string outBmd = msgPath.Replace(".msg", "");
+                    Process p = new Process();
+                    p.StartInfo = new ProcessStartInfo(compilerPath);
+                    p.StartInfo.FileName = compilerPath;
+                    p.StartInfo.Arguments = 
+                        $"\"{msgPath}\" -Compile -Library P5R -Encoding P5R_EFIGS -OutFormat V1BE -Out \"{outBmd}\"";
+                    p.Start();
+                    p.WaitForExit();
+                    _logger.WriteLine($"Recompiled chat messages to navigator .BMD:\n\"{Path.GetFullPath(outBmd)}\"", System.Drawing.Color.Green);
+
+                }
+            }
+            else
+                _logger.WriteLine($"Failed to recompile chat messages, could not locate file:\n\"{Path.GetFullPath(compilerPathTxt)}\"", System.Drawing.Color.Red);
+
+        }
+
+        #region Standard Overrides
+        public override void ConfigurationUpdated(Config configuration)
 	{
 		// Apply settings from configuration.
 		// ... your code here.
@@ -149,4 +216,25 @@ namespace VinesauceModSettings
 #pragma warning restore CS8618
 	#endregion
 	}
+
+    public static class StringExtensions
+    {
+        public static List<string> SplitAtOccurence(this string input, char separator, int occurence)
+        {
+            var parts = input.Split(separator);
+            var partlist = new List<string>();
+            var result = new List<string>();
+            for (int i = 0; i < parts.Length; i++)
+            {
+                if (partlist.Count == occurence)
+                {
+                    result.Add(string.Join(separator.ToString(), partlist));
+                    partlist.Clear();
+                }
+                partlist.Add(parts[i]);
+                if (i == parts.Length - 1) result.Add(string.Join(separator.ToString(), partlist)); // if no more parts, add the rest
+            }
+            return result;
+        }
+    }
 }
