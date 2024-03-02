@@ -37,9 +37,15 @@ namespace VinesauceModSettings.Configuration
 
         [Category("Chat Messages")]
         [DisplayName("Randomize Chat Messages")]
-        [Description("Re-order chat messages every time you launch the game.")]
+        [Description("Re-order navigator chat messages every time you launch the game.")]
         [DefaultValue(false)]
         public bool RandomizeChatMsgs { get; set; } = true; // bool used in Mod.CS, not the folder name, but the bool name
+
+        [Category("Chat Messages")]
+        [DisplayName("Mimic Twitch Chat")]
+        [Description("Shows multiple navi chat messages at once in quick succession.")]
+        [DefaultValue(false)]
+        public bool MimicTwitchChat { get; set; } = true; // bool used in Mod.CS, not the folder name, but the bool name
 
 
         [Category("UI Artwork")]

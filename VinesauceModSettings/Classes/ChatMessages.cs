@@ -29,12 +29,18 @@ namespace VinesauceModSettings
                         string newLine = "";
                         int voiceClipIndex = 1;
                         newLine += $"\n[msg btl_support_0{navi_id}_{i + 1}]\n";
-                        for (int x = 0; x < 4; x++)
+                        if (_configuration.MimicTwitchChat)
                         {
-                            //if (x == 3)
-                            //    voiceClipIndex = 0;
-                            newLine += $"[s][vp 8 1 65535 {voiceClipIndex} 0 0] {chatLines[random.Next(0, chatLines.Length - 1)]}[n][f 1 6 65534][e]\n";
+                            for (int x = 0; x < 4; x++)
+                            {
+                                //if (x == 3)
+                                    //voiceClipIndex = 2;
+                                newLine += $"[s][vp 8 1 65535 {voiceClipIndex} 0 0] {chatLines[random.Next(0, chatLines.Length - 1)]}[n][f 1 6 65534][e]\n";
+                            }
                         }
+                        else
+                            newLine += $"[s][vp 8 1 65535 2 0 0]{chatLines[random.Next(0, chatLines.Length - 1)]}[n][f 1 6 65534][e]\n";
+
                         msgTxt += newLine;
                     }
                     File.WriteAllText(msgPath, msgTxt);
