@@ -112,6 +112,10 @@ namespace VinesauceModSettings
             {
                 criFsApi.AddProbingPath("EventSkip"); // folder path. place a subfolder inside and then start your file path. for example: "(mod folder)\Test\(any name)\..."
             }
+            if (_configuration.Debug)
+            {
+                criFsApi.AddProbingPath("Debug"); // folder path. place a subfolder inside and then start your file path. for example: "(mod folder)\Test\(any name)\..."
+            }
 
             /*
             // PAK Emulator
@@ -126,7 +130,10 @@ namespace VinesauceModSettings
             {
                 _BfEmulator.AddDirectory(Path.Combine(modDir, "EventSkip")); // folder path. immediately start your file path inside this folder. for example: "(mod folder)\Test\..."
             }
-
+            if (_configuration.Debug)
+            {
+                _BfEmulator.AddDirectory(Path.Combine(modDir, "Debug")); // folder path. immediately start your file path inside this folder. for example: "(mod folder)\Test\..."
+            }
             if (_configuration.RandomizeChatMsgs)
             {
                 RewriteChatMessages($"{Path.GetDirectoryName(System.Reflection.Assembly.GetExecutingAssembly().Location)}\\P5REssentials\\CPK\\CHAT.CPK\\BATTLE\\MESSAGE\\EN\\chat.txt");

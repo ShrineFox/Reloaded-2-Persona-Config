@@ -53,6 +53,13 @@ namespace VinesauceModSettings.Configuration
         [Description("Enable this option to see NeonWillowLeaf's Scoot AoA in place of the default one by CheesyDraws.")]
         [DefaultValue(false)]
         public bool NeonWillowLeaf { get; set; } = false; // bool used in Mod.CS, not the folder name, but the bool name
+
+        [Category("Mod Testing")]
+        [DisplayName("Debug Mode")]
+        [Description("Show title screen debug menu & override save button with Mod Menu.")]
+        [DefaultValue(true)]
+        public bool Debug { get; set; } = true; // bool used in Mod.CS, not the folder name, but the bool name
+
     }
 
     /// <summary>
