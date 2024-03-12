@@ -108,13 +108,17 @@ namespace VinesauceModSettings
 			{
 				criFsApi.AddProbingPath("NeonWillowLeaf"); // folder path. place a subfolder inside and then start your file path. for example: "(mod folder)\Test\(any name)\..."
 			}
-            if (_configuration.EventSkip)
+            if (_configuration.NewStory)
             {
-                criFsApi.AddProbingPath("EventSkip"); // folder path. place a subfolder inside and then start your file path. for example: "(mod folder)\Test\(any name)\..."
+                criFsApi.AddProbingPath("NewStory"); // folder path. place a subfolder inside and then start your file path. for example: "(mod folder)\Test\(any name)\..."
             }
             if (_configuration.Debug)
             {
                 criFsApi.AddProbingPath("Debug"); // folder path. place a subfolder inside and then start your file path. for example: "(mod folder)\Test\(any name)\..."
+            }
+            if (_configuration.EventSkip)
+            {
+                criFsApi.AddProbingPath("EventSkip"); // folder path. place a subfolder inside and then start your file path. for example: "(mod folder)\Test\(any name)\..."
             }
 
             /*
@@ -126,9 +130,9 @@ namespace VinesauceModSettings
             */
 
             // BF Emulator
-            if (_configuration.EventSkip)
+            if (_configuration.NewStory)
             {
-                _BfEmulator.AddDirectory(Path.Combine(modDir, "EventSkip")); // folder path. immediately start your file path inside this folder. for example: "(mod folder)\Test\..."
+                _BfEmulator.AddDirectory(Path.Combine(modDir, "NewStory")); // folder path. immediately start your file path inside this folder. for example: "(mod folder)\Test\..."
             }
             if (_configuration.Debug)
             {

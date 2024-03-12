@@ -33,7 +33,7 @@ namespace VinesauceModSettings.Configuration
         [DisplayName("Replace Story Events")]
         [Description("Skip the game's original story events and use new material.")]
         [DefaultValue(true)]
-        public bool EventSkip { get; set; } = true; // bool used in Mod.CS, not the folder name, but the bool name
+        public bool NewStory { get; set; } = true; // bool used in Mod.CS, not the folder name, but the bool name
 
         [Category("Chat Messages")]
         [DisplayName("Randomize Chat Messages")]
@@ -59,6 +59,12 @@ namespace VinesauceModSettings.Configuration
         [Description("Show title screen debug menu & override save button with Mod Menu.")]
         [DefaultValue(true)]
         public bool Debug { get; set; } = true; // bool used in Mod.CS, not the folder name, but the bool name
+        
+        [Category("Mod Testing")]
+        [DisplayName("Skip Events")]
+        [Description("Use dummy EVT files to quickly skip over cinematic cutscenes.")]
+        [DefaultValue(true)]
+        public bool EventSkip { get; set; } = true; // bool used in Mod.CS, not the folder name, but the bool name
 
     }
 
