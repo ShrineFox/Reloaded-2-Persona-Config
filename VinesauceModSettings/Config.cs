@@ -31,7 +31,7 @@ namespace VinesauceModSettings.Configuration
 
         [Category("New Story Mode")]
         [DisplayName("Replace Story Events")]
-        [Description("Skip the game's original story events and use new material.")]
+        [Description("Skip the game's original story events in favor of new material.")]
         [DefaultValue(true)]
         public bool NewStory { get; set; } = true; // bool used in Mod.CS, not the folder name, but the bool name
 
@@ -54,18 +54,11 @@ namespace VinesauceModSettings.Configuration
         [DefaultValue(false)]
         public bool NeonWillowLeaf { get; set; } = false; // bool used in Mod.CS, not the folder name, but the bool name
 
-        [Category("Mod Testing")]
-        [DisplayName("Debug Mode")]
-        [Description("Show title screen debug menu & override save button with Mod Menu.")]
+        [Category("Misc")]
+        [DisplayName("Overwrite P5RCBT Config")]
+        [Description("Disable this option if you want to use your own P5RCBT settings.")]
         [DefaultValue(true)]
-        public bool Debug { get; set; } = true; // bool used in Mod.CS, not the folder name, but the bool name
-        
-        [Category("Mod Testing")]
-        [DisplayName("Skip Events")]
-        [Description("Use dummy EVT files to quickly skip over cinematic cutscenes.")]
-        [DefaultValue(true)]
-        public bool EventSkip { get; set; } = true; // bool used in Mod.CS, not the folder name, but the bool name
-
+        public bool OverwriteP5RCBTConfig { get; set; } = true; // bool used in Mod.CS, not the folder name, but the bool name
     }
 
     /// <summary>

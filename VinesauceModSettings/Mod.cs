@@ -112,14 +112,6 @@ namespace VinesauceModSettings
             {
                 criFsApi.AddProbingPath("NewStory"); // folder path. place a subfolder inside and then start your file path. for example: "(mod folder)\Test\(any name)\..."
             }
-            if (_configuration.Debug)
-            {
-                criFsApi.AddProbingPath("Debug"); // folder path. place a subfolder inside and then start your file path. for example: "(mod folder)\Test\(any name)\..."
-            }
-            if (_configuration.EventSkip)
-            {
-                criFsApi.AddProbingPath("EventSkip"); // folder path. place a subfolder inside and then start your file path. for example: "(mod folder)\Test\(any name)\..."
-            }
 
             /*
             // PAK Emulator
@@ -134,22 +126,36 @@ namespace VinesauceModSettings
             {
                 _BfEmulator.AddDirectory(Path.Combine(modDir, "NewStory")); // folder path. immediately start your file path inside this folder. for example: "(mod folder)\Test\..."
             }
-            if (_configuration.Debug)
-            {
-                _BfEmulator.AddDirectory(Path.Combine(modDir, "Debug")); // folder path. immediately start your file path inside this folder. for example: "(mod folder)\Test\..."
-            }
             if (_configuration.RandomizeChatMsgs)
             {
                 RewriteChatMessages($"{Path.GetDirectoryName(System.Reflection.Assembly.GetExecutingAssembly().Location)}\\P5REssentials\\CPK\\CHAT.CPK\\BATTLE\\MESSAGE\\EN\\chat.txt");
             }
 
-            /*
+			/*
             // BGME
             if (_configuration.NeonWillowLeaf)
             {
 				_BGME.AddFolder(Path.Combine(modDir, "NeonWillowLeaf")); // folder path. immediately start your file path inside this folder. for example: "(mod folder)\Test\..."
             }
 			*/
+
+			if (_configuration.OverwriteP5RCBTConfig)
+				CopyP5RCBTConfig();
+        }
+
+        private void CopyP5RCBTConfig()
+        {
+			string cbtConfig = $"{Path.GetDirectoryName(System.Reflection.Assembly.GetExecutingAssembly().Location)}\\config.toml";
+			string destPath = $"{Path.GetDirectoryName(Path.GetDirectoryName(System.Reflection.Assembly.GetExecutingAssembly().Location))}\\p5r.enhance.cbt\\config.toml";
+		
+			if (!File.Exists(destPath))
+                _logger.WriteLine($"Failed to update P5RCBT config.toml, could not locate file:\n\"{Path.GetFullPath(destPath)}\"", System.Drawing.Color.Red);
+			else
+			{
+				File.Copy(cbtConfig,destPath, true);
+                _logger.WriteLine($"Updated P5RCBT config.toml using Vinesauce Mod settings.\n\"{Path.GetFullPath(destPath)}\"", System.Drawing.Color.Green);
+            }
+
         }
 
         #region Standard Overrides
