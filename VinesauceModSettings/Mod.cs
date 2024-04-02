@@ -112,14 +112,10 @@ namespace VinesauceModSettings
             {
                 criFsApi.AddProbingPath("NewStory"); // folder path. place a subfolder inside and then start your file path. for example: "(mod folder)\Test\(any name)\..."
             }
+            criFsApi.AddProbingPath("Textures"); // folder path. place a subfolder inside and then start your file path. for example: "(mod folder)\Test\(any name)\..."
 
-            /*
             // PAK Emulator
-            if (_configuration.NeonWillowLeaf)
-			{
-				_PakEmulator.AddDirectory(Path.Combine(modDir, "NeonWillowLeaf")); // folder path. immediately start your file path inside this folder. for example: "(mod folder)\Test\..."
-            }
-            */
+            _PakEmulator.AddDirectory(Path.Combine(modDir, "Textures")); // folder path. immediately start your file path inside this folder. for example: "(mod folder)\Test\..."
 
             // BF Emulator
             if (_configuration.NewStory)
