@@ -106,21 +106,24 @@ namespace VinesauceModSettings
             // criFS
             if (_configuration.NeonWillowLeaf)
 			{
-				criFsApi.AddProbingPath("NeonWillowLeaf"); // folder path. place a subfolder inside and then start your file path. for example: "(mod folder)\Test\(any name)\..."
+				criFsApi.AddProbingPath("NeonWillowLeaf\\CPK"); // folder path. place a subfolder inside and then start your file path. for example: "(mod folder)\Test\(any name)\..."
 			}
             if (_configuration.NewStory)
             {
-                criFsApi.AddProbingPath("NewStory"); // folder path. place a subfolder inside and then start your file path. for example: "(mod folder)\Test\(any name)\..."
+                criFsApi.AddProbingPath("NewStory\\CPK"); // folder path. place a subfolder inside and then start your file path. for example: "(mod folder)\Test\(any name)\..."
             }
-            criFsApi.AddProbingPath("Textures"); // folder path. place a subfolder inside and then start your file path. for example: "(mod folder)\Test\(any name)\..."
+            criFsApi.AddProbingPath("Textures\\RepackedBINs"); // folder path. place a subfolder inside and then start your file path. for example: "(mod folder)\Test\(any name)\..."
 
             // PAK Emulator
-            _PakEmulator.AddDirectory(Path.Combine(modDir, "Textures")); // folder path. immediately start your file path inside this folder. for example: "(mod folder)\Test\..."
+            if (_configuration.EmulateTextures)
+            {
+                _PakEmulator.AddDirectory(Path.Combine(modDir, "Textures\\LooseBINs")); // folder path. immediately start your file path inside this folder. for example: "(mod folder)\Test\..."
+            }
 
             // BF Emulator
             if (_configuration.NewStory)
             {
-                _BfEmulator.AddDirectory(Path.Combine(modDir, "NewStory")); // folder path. immediately start your file path inside this folder. for example: "(mod folder)\Test\..."
+                _BfEmulator.AddDirectory(Path.Combine(modDir, "NewStory\\BF")); // folder path. immediately start your file path inside this folder. for example: "(mod folder)\Test\..."
             }
             if (_configuration.RandomizeChatMsgs)
             {

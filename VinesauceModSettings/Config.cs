@@ -54,11 +54,18 @@ namespace VinesauceModSettings.Configuration
         [DefaultValue(false)]
         public bool NeonWillowLeaf { get; set; } = false; // bool used in Mod.CS, not the folder name, but the bool name
 
-        [Category("Misc")]
+        [Category("Miscellaneous")]
         [DisplayName("Overwrite P5RCBT Config")]
         [Description("Disable this option if you want to use your own P5RCBT settings.")]
         [DefaultValue(true)]
         public bool OverwriteP5RCBTConfig { get; set; } = true; // bool used in Mod.CS, not the folder name, but the bool name
+
+        [Category("Miscellaneous")]
+        [DisplayName("Load Emulated Textures")]
+        [Description("Use loose unpacked files for texture edits. Disable for quicker startup while testing.")]
+        [DefaultValue(true)]
+        public bool EmulateTextures { get; set; } = true; // bool used in Mod.CS, not the folder name, but the bool name
+
     }
 
     /// <summary>
