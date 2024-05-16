@@ -21,7 +21,7 @@ namespace VinesauceModSettings
                 List<int> navi_IDs = new List<int>() { 3, 8, 9 };
                 foreach (int navi_id in navi_IDs)
                 {
-                    string msgPath = Path.Combine(txtDir, $"NAVI_0{navi_id}.BMD.msg");
+                    string msgPath = Path.Combine(txtDir, "BMD", $"NAVI_0{navi_id}.msg");
                     string msgTxt = "";
                     for (int i = 0; i < 1282; i++)
                     {
@@ -47,7 +47,6 @@ namespace VinesauceModSettings
 
                     _logger.WriteLine($"Finished randomizing lines in:\n\"{msgPath}\"", System.Drawing.Color.Green);
                 }
-                CompileNaviMSGsToBMD(txtDir);
             }
             else
                 _logger.WriteLine($"Failed to randomize chat messages, could not locate file:\n\"{Path.GetFullPath(txtPath)}\"", System.Drawing.Color.Red);
@@ -55,6 +54,8 @@ namespace VinesauceModSettings
 
         private void CompileNaviMSGsToBMD(string txtDir)
         {
+            // NOTE: Obsolete due to BMD Merging
+
             string compilerPathTxt = Path.Combine(txtDir, "AtlusScriptCompilerPath.txt");
             if (File.Exists(compilerPathTxt))
             {

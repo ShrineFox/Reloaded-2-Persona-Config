@@ -12,6 +12,7 @@ using BGME.Framework.Interfaces;
 using BF.File.Emulator;
 using BF.File.Emulator.Interfaces;
 using System.Diagnostics;
+using BMD.File.Emulator.Interfaces;
 
 namespace VinesauceModSettings
 {
@@ -93,12 +94,21 @@ namespace VinesauceModSettings
                 return;
             }
 
+            var BmdEmulatorController = _modLoader.GetController<IBmdEmulator>();
+            if (BmdEmulatorController == null || !BmdEmulatorController.TryGetTarget(out var _BmdEmulator))
+            {
+                _logger.WriteLine($"Something in BMD Emulator shit its pants! Files requiring bmd merging will not load properly!", System.Drawing.Color.Red);
+                return;
+            }
+
             var BGMEController = _modLoader.GetController<IBgmeApi>();
 			if (BGMEController == null || !BGMEController.TryGetTarget(out var _BGME))
 			{
 				_logger.WriteLine($"Something in BGME shit its pants! Files requiring bin merging will not load properly!", System.Drawing.Color.Red);
 				return;
             }
+
+
 
 
             // Set configuration options - obviously you don't need all of these, pick and choose what you need!
@@ -125,16 +135,24 @@ namespace VinesauceModSettings
             {
                 _BfEmulator.AddDirectory(Path.Combine(modDir, "NewStory\\BF")); // folder path. immediately start your file path inside this folder. for example: "(mod folder)\Test\..."
             }
+            // BMD Emulator
+            if (_configuration.NewStory)
+            {
+                _BmdEmulator.AddDirectory(Path.Combine(modDir, "NewStory\\BMD")); // folder path. immediately start your file path inside this folder. for example: "(mod folder)\Test\..."
+            }
+			// Chat Messages
+            criFsApi.AddProbingPath("Chat\\CPK"); // folder path. place a subfolder inside and then start your file path. for example: "(mod folder)\Test\(any name)\..."
+            _BmdEmulator.AddDirectory(Path.Combine(modDir, "Chat\\BMD")); // folder path. immediately start your file path inside this folder. for example: "(mod folder)\Test\..."
             if (_configuration.RandomizeChatMsgs)
             {
-                RewriteChatMessages($"{Path.GetDirectoryName(System.Reflection.Assembly.GetExecutingAssembly().Location)}\\P5REssentials\\CPK\\CHAT.CPK\\BATTLE\\MESSAGE\\EN\\chat.txt");
+                RewriteChatMessages($"{Path.GetDirectoryName(System.Reflection.Assembly.GetExecutingAssembly().Location)}\\Chat\\chat.txt");
             }
 
 			/*
             // BGME
             if (_configuration.NeonWillowLeaf)
             {
-				_BGME.AddFolder(Path.Combine(modDir, "NeonWillowLeaf")); // folder path. immediately start your file path inside this folder. for example: "(mod folder)\Test\..."
+				_BGME.AddFolder(Path.Combine(modDir, "BGME")); // folder path. immediately start your file path inside this folder. for example: "(mod folder)\Test\..."
             }
 			*/
 
