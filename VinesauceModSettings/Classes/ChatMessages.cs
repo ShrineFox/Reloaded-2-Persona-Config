@@ -43,6 +43,7 @@ namespace VinesauceModSettings
 
                         msgTxt += newLine;
                     }
+                    Directory.CreateDirectory(Path.GetDirectoryName(msgPath));
                     File.WriteAllText(msgPath, msgTxt);
 
                     _logger.WriteLine($"Finished randomizing lines in:\n\"{msgPath}\"", System.Drawing.Color.Green);
