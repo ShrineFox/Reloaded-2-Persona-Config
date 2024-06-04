@@ -141,7 +141,8 @@ namespace VinesauceModSettings
             // Config Option: Randomize Chat Messages
             criFsApi.AddProbingPath($"{modDir}\\Mod Files\\Toggleable\\Chat Navi\\CPK");
             _BmdEmulator.AddDirectory($"{modDir}\\Mod Files\\Toggleable\\Chat Navi\\BMD");
-            if (_configuration.RandomizeChatMsgs)
+            if (_configuration.RandomizeChatMsgs || !Directory.Exists(
+                $"{modDir}\\Mod Files\\Toggleable\\Chat Navi\\BMD"))
                 RewriteChatMessages($"{modDir}\\Mod Files\\Toggleable\\Chat Navi\\chat.txt");
 
             // Config Option: New Story
