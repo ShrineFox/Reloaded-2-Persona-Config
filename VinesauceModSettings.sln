@@ -17,6 +17,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BF.File.Emulator.Interfaces
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BMD.File.Emulator.Interfaces", "..\FileEmulationFramework\Emulator\Interfaces\BMD.File.Emulator.Interfaces\BMD.File.Emulator.Interfaces.csproj", "{ADD8A391-C9CF-45C3-8F5C-215134A17898}"
 EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SPD.File.Emulator.Interfaces", "..\FileEmulationFramework\Emulator\Interfaces\SPD.File.Emulator.Interfaces\SPD.File.Emulator.Interfaces.csproj", "{EE7B28C9-E6CA-4469-B665-D31997FDFB28}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -47,6 +49,10 @@ Global
 		{ADD8A391-C9CF-45C3-8F5C-215134A17898}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{ADD8A391-C9CF-45C3-8F5C-215134A17898}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{ADD8A391-C9CF-45C3-8F5C-215134A17898}.Release|Any CPU.Build.0 = Release|Any CPU
+		{EE7B28C9-E6CA-4469-B665-D31997FDFB28}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{EE7B28C9-E6CA-4469-B665-D31997FDFB28}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{EE7B28C9-E6CA-4469-B665-D31997FDFB28}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{EE7B28C9-E6CA-4469-B665-D31997FDFB28}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

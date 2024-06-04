@@ -13,6 +13,7 @@ using BF.File.Emulator;
 using BF.File.Emulator.Interfaces;
 using System.Diagnostics;
 using BMD.File.Emulator.Interfaces;
+using SPD.File.Emulator.Interfaces;
 
 namespace VinesauceModSettings
 {
@@ -72,13 +73,21 @@ namespace VinesauceModSettings
             // TODO: Implement some mod logic
 
             // Define controllers and other variables, set warning messages
-
             var criFsController = _modLoader.GetController<ICriFsRedirectorApi>();
 			if (criFsController == null || !criFsController.TryGetTarget(out var criFsApi))
 			{
 				_logger.WriteLine($"Something in CriFS shit its pants! Normal files will not load properly!", System.Drawing.Color.Red);
 				return;
             }
+
+			/*
+            var AwbEmulatorController = _modLoader.GetController<IAwbEmulator>();
+            if (AwbEmulatorController == null || !AwbEmulatorController.TryGetTarget(out var _AwbEmulator))
+            {
+                _logger.WriteLine($"Something in AWB Emulator shit its pants! Normal files will not load properly!", System.Drawing.Color.Red);
+                return;
+            }
+			*/
 
             var PakEmulatorController = _modLoader.GetController<IPakEmulator>();
             if (PakEmulatorController == null || !PakEmulatorController.TryGetTarget(out var _PakEmulator))
@@ -89,6 +98,13 @@ namespace VinesauceModSettings
 
             var BfEmulatorController = _modLoader.GetController<IBfEmulator>();
             if (BfEmulatorController == null || !BfEmulatorController.TryGetTarget(out var _BfEmulator))
+            {
+                _logger.WriteLine($"Something in BF Emulator shit its pants! Files requiring bf merging will not load properly!", System.Drawing.Color.Red);
+                return;
+            }
+
+            var SpdEmulatorController = _modLoader.GetController<ISpdEmulator>();
+            if (SpdEmulatorController == null || !SpdEmulatorController.TryGetTarget(out var _SpdEmulator))
             {
                 _logger.WriteLine($"Something in BF Emulator shit its pants! Files requiring bf merging will not load properly!", System.Drawing.Color.Red);
                 return;
@@ -108,55 +124,44 @@ namespace VinesauceModSettings
 				return;
             }
 
+            // Main Files
+            criFsApi.AddProbingPath("Mod Files\\Main\\_CPK");
+            _BGME.AddFolder("Mod Files\\Main\\BGME");
+            _BfEmulator.AddDirectory("Mod Files\\Main\\BF");
+            _BmdEmulator.AddDirectory("Mod Files\\Main\\BMD");
+            _PakEmulator.AddDirectory("Mod Files\\Main\\PAK");
+            _SpdEmulator.AddDirectory("Mod Files\\Main\\SPD");
 
+            // Toggleable
 
-
-            // Set configuration options - obviously you don't need all of these, pick and choose what you need!
-
-            // criFS
+            // Config Option: Alt Scoot AoA by NeonWillowLeaf
             if (_configuration.NeonWillowLeaf)
-			{
-				criFsApi.AddProbingPath("NeonWillowLeaf\\CPK"); // folder path. place a subfolder inside and then start your file path. for example: "(mod folder)\Test\(any name)\..."
-			}
-            if (_configuration.NewStory)
-            {
-                criFsApi.AddProbingPath("NewStory\\CPK"); // folder path. place a subfolder inside and then start your file path. for example: "(mod folder)\Test\(any name)\..."
-            }
-            criFsApi.AddProbingPath("Textures\\RepackedBINs"); // folder path. place a subfolder inside and then start your file path. for example: "(mod folder)\Test\(any name)\..."
+                criFsApi.AddProbingPath("Mod Files\\Toggleable\\Alt Scoot AoA");
 
-            // PAK Emulator
-            if (_configuration.EmulateTextures)
-            {
-                _PakEmulator.AddDirectory(Path.Combine(modDir, "Textures\\LooseBINs")); // folder path. immediately start your file path inside this folder. for example: "(mod folder)\Test\..."
-            }
-
-            // BF Emulator
-            if (_configuration.NewStory)
-            {
-                _BfEmulator.AddDirectory(Path.Combine(modDir, "NewStory\\BF")); // folder path. immediately start your file path inside this folder. for example: "(mod folder)\Test\..."
-            }
-            // BMD Emulator
-            if (_configuration.NewStory)
-            {
-                _BmdEmulator.AddDirectory(Path.Combine(modDir, "NewStory\\BMD")); // folder path. immediately start your file path inside this folder. for example: "(mod folder)\Test\..."
-            }
-			// Chat Messages
-            criFsApi.AddProbingPath("Chat\\CPK"); // folder path. place a subfolder inside and then start your file path. for example: "(mod folder)\Test\(any name)\..."
-            _BmdEmulator.AddDirectory(Path.Combine(modDir, "Chat\\BMD")); // folder path. immediately start your file path inside this folder. for example: "(mod folder)\Test\..."
+            // Config Option: Randomize Chat Messages
+            criFsApi.AddProbingPath("Mod Files\\Toggleable\\Chat Navi\\CPK");
+            _BmdEmulator.AddDirectory("Mod Files\\Toggleable\\Chat Navi\\BMD");
             if (_configuration.RandomizeChatMsgs)
+                RewriteChatMessages($"{modDir}\\Mod Files\\Toggleable\\Chat Navi\\chat.txt");
+
+            // Config Option: New Story
+
+            if (_configuration.NewStory)
             {
-                RewriteChatMessages($"{Path.GetDirectoryName(System.Reflection.Assembly.GetExecutingAssembly().Location)}\\Chat\\chat.txt");
+                criFsApi.AddProbingPath("Mod Files\\Toggleable\\New Story\\CPK");
+                criFsApi.AddProbingPath("Mod Files\\Toggleable\\New Story\\Textures\\RepackedBINs");
+                criFsApi.AddProbingPath("Mod Files\\Toggleable\\New Story\\Scripts\\CPK");
+                _BfEmulator.AddDirectory("Mod Files\\Toggleable\\New Story\\Scripts\\BF");
+                _BmdEmulator.AddDirectory("Mod Files\\Toggleable\\New Story\\Scripts\\BMD");
+
+                // Config Option: Emulate Unpacked Palace Textures
+                if (_configuration.EmulateTextures)
+                    _PakEmulator.AddDirectory("Mod Files\\Toggleable\\New Story\\Textures\\LooseBINs");
             }
 
-			/*
-            // BGME
-            if (_configuration.NeonWillowLeaf)
-            {
-				_BGME.AddFolder(Path.Combine(modDir, "BGME")); // folder path. immediately start your file path inside this folder. for example: "(mod folder)\Test\..."
-            }
-			*/
+            // Config Option: Overwrite P5R Custom Bonus Tweaks config.toml
 
-			if (_configuration.OverwriteP5RCBTConfig)
+            if (_configuration.OverwriteP5RCBTConfig)
 				CopyP5RCBTConfig();
         }
 
