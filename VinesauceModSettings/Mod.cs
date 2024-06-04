@@ -125,22 +125,22 @@ namespace VinesauceModSettings
             }
 
             // Main Files
-            criFsApi.AddProbingPath("Mod Files\\Main\\_CPK");
-            _BGME.AddFolder("Mod Files\\Main\\BGME");
-            _BfEmulator.AddDirectory("Mod Files\\Main\\BF");
-            _BmdEmulator.AddDirectory("Mod Files\\Main\\BMD");
-            _PakEmulator.AddDirectory("Mod Files\\Main\\PAK");
-            _SpdEmulator.AddDirectory("Mod Files\\Main\\SPD");
+            criFsApi.AddProbingPath($"{modDir}\\Mod Files\\Main\\_CPK");
+            _BGME.AddFolder($"{modDir}\\Mod Files\\Main\\BGME");
+            _BfEmulator.AddDirectory($"{modDir}\\Mod Files\\Main\\BF");
+            _BmdEmulator.AddDirectory($"{modDir}\\Mod Files\\Main\\BMD");
+            _PakEmulator.AddDirectory($"{modDir}\\Mod Files\\Main\\PAK");
+            _SpdEmulator.AddDirectory($"{modDir}\\Mod Files\\Main\\SPD");
 
             // Toggleable
 
             // Config Option: Alt Scoot AoA by NeonWillowLeaf
             if (_configuration.NeonWillowLeaf)
-                criFsApi.AddProbingPath("Mod Files\\Toggleable\\Alt Scoot AoA");
+                criFsApi.AddProbingPath($"{modDir}\\Mod Files\\Toggleable\\Alt Scoot AoA");
 
             // Config Option: Randomize Chat Messages
-            criFsApi.AddProbingPath("Mod Files\\Toggleable\\Chat Navi\\CPK");
-            _BmdEmulator.AddDirectory("Mod Files\\Toggleable\\Chat Navi\\BMD");
+            criFsApi.AddProbingPath($"{modDir}\\Mod Files\\Toggleable\\Chat Navi\\CPK");
+            _BmdEmulator.AddDirectory($"{modDir}\\Mod Files\\Toggleable\\Chat Navi\\BMD");
             if (_configuration.RandomizeChatMsgs)
                 RewriteChatMessages($"{modDir}\\Mod Files\\Toggleable\\Chat Navi\\chat.txt");
 
@@ -148,15 +148,15 @@ namespace VinesauceModSettings
 
             if (_configuration.NewStory)
             {
-                criFsApi.AddProbingPath("Mod Files\\Toggleable\\New Story\\CPK");
-                criFsApi.AddProbingPath("Mod Files\\Toggleable\\New Story\\Textures\\RepackedBINs");
-                criFsApi.AddProbingPath("Mod Files\\Toggleable\\New Story\\Scripts\\CPK");
-                _BfEmulator.AddDirectory("Mod Files\\Toggleable\\New Story\\Scripts\\BF");
-                _BmdEmulator.AddDirectory("Mod Files\\Toggleable\\New Story\\Scripts\\BMD");
+                criFsApi.AddProbingPath($"{modDir}\\Mod Files\\Toggleable\\New Story\\CPK");
+                criFsApi.AddProbingPath($"{modDir}\\Mod Files\\Toggleable\\New Story\\Textures\\RepackedBINs");
+                criFsApi.AddProbingPath($"{modDir}\\Mod Files\\Toggleable\\New Story\\Scripts\\CPK");
+                _BfEmulator.AddDirectory($"{modDir}\\Mod Files\\Toggleable\\New Story\\Scripts\\BF");
+                _BmdEmulator.AddDirectory($"{modDir}\\Mod Files\\Toggleable\\New Story\\Scripts\\BMD");
 
                 // Config Option: Emulate Unpacked Palace Textures
                 if (_configuration.EmulateTextures)
-                    _PakEmulator.AddDirectory("Mod Files\\Toggleable\\New Story\\Textures\\LooseBINs");
+                    _PakEmulator.AddDirectory($"{modDir}\\Mod Files\\Toggleable\\New Story\\Textures\\LooseBINs");
             }
 
             // Config Option: Overwrite P5R Custom Bonus Tweaks config.toml
