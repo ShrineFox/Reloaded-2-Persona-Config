@@ -141,9 +141,11 @@ namespace VinesauceModSettings
             // Config Option: Randomize Chat Messages
             criFsApi.AddProbingPath($"{modDir}\\Mod Files\\Toggleable\\Chat Navi\\CPK");
             _BmdEmulator.AddDirectory($"{modDir}\\Mod Files\\Toggleable\\Chat Navi\\BMD");
-            if (_configuration.RandomizeChatMsgs || !Directory.Exists(
-                $"{modDir}\\Mod Files\\Toggleable\\Chat Navi\\BMD"))
+            if (_configuration.RandomizeChatMsgs || 
+                !Directory.Exists($"{modDir}\\Mod Files\\Toggleable\\Chat Navi\\BMD"))
+            {
                 RewriteChatMessages($"{modDir}\\Mod Files\\Toggleable\\Chat Navi\\chat.txt");
+            }
 
             // Config Option: New Story
 
@@ -162,23 +164,20 @@ namespace VinesauceModSettings
 
             // Config Option: Overwrite P5R Custom Bonus Tweaks config.toml
 
-            if (_configuration.OverwriteP5RCBTConfig)
-				CopyP5RCBTConfig();
+            var cbtDir = _modLoader.GetDirectoryForModId("p5r.enhance.cbt");
+            if (!Directory.Exists(cbtDir))
+                _logger.WriteLine($"Failed to update P5RCBT config.toml, could not locate Persona 5 Royal Custom Bonus Tweaks mod.", System.Drawing.Color.Red);
+            else if (_configuration.OverwriteP5RCBTConfig)
+				CopyP5RCBTConfig(modDir, cbtDir);
         }
 
-        private void CopyP5RCBTConfig()
+        private void CopyP5RCBTConfig(string modDir, string cbtDir)
         {
-			string cbtConfig = $"{Path.GetDirectoryName(System.Reflection.Assembly.GetExecutingAssembly().Location)}\\config.toml";
-			string destPath = $"{Path.GetDirectoryName(Path.GetDirectoryName(System.Reflection.Assembly.GetExecutingAssembly().Location))}\\p5r.enhance.cbt\\config.toml";
-		
-			if (!File.Exists(destPath))
-                _logger.WriteLine($"Failed to update P5RCBT config.toml, could not locate file:\n\"{Path.GetFullPath(destPath)}\"", System.Drawing.Color.Red);
-			else
-			{
-				File.Copy(cbtConfig,destPath, true);
-                _logger.WriteLine($"Updated P5RCBT config.toml using Vinesauce Mod settings.\n\"{Path.GetFullPath(destPath)}\"", System.Drawing.Color.Green);
-            }
+            string cbtConfig = Path.Combine(modDir, "config.toml");
+			string destPath = Path.Combine(cbtDir, "config.toml");
 
+			File.Copy(cbtConfig,destPath, true);
+            _logger.WriteLine($"Updated P5RCBT config.toml using Vinesauce Mod settings.\n\"{Path.GetFullPath(destPath)}\"", System.Drawing.Color.Green);
         }
 
         #region Standard Overrides
