@@ -163,12 +163,16 @@ namespace VinesauceModSettings
             }
 
             // Config Option: Overwrite P5R Custom Bonus Tweaks config.toml
-
-            var cbtDir = _modLoader.GetDirectoryForModId("p5r.enhance.cbt");
-            if (!Directory.Exists(cbtDir))
+            try
+            {
+                var cbtDir = _modLoader.GetDirectoryForModId("p5r.enhance.cbt");
+                if (_configuration.OverwriteP5RCBTConfig)
+                    CopyP5RCBTConfig(modDir, cbtDir);
+            }
+            catch
+            {
                 _logger.WriteLine($"Failed to update P5RCBT config.toml, could not locate Persona 5 Royal Custom Bonus Tweaks mod.", System.Drawing.Color.Red);
-            else if (_configuration.OverwriteP5RCBTConfig)
-				CopyP5RCBTConfig(modDir, cbtDir);
+            }
         }
 
         private void CopyP5RCBTConfig(string modDir, string cbtDir)
