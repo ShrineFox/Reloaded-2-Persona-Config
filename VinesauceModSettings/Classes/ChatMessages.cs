@@ -96,12 +96,12 @@ namespace VinesauceModSettings
             // Add silent navi SFX to FEmu if it's missing
             if (!Directory.Exists(awbEmuDir01) && Directory.Exists(silentSfxDir))
             {
-                CopyDir(silentSfxDir, awbEmuDir01);
+                CopyDir(silentSfxDir, Path.GetDirectoryName(awbEmuDir01));
                 _logger.WriteLine($"Created silent navi SFX.", System.Drawing.Color.Green);
             }
             if (!Directory.Exists(awbEmuDir02) && Directory.Exists(silentSfxDir))
             {
-                CopyDir(silentSfxDir, awbEmuDir02);
+                CopyDir(silentSfxDir, Path.GetDirectoryName(awbEmuDir02));
                 _logger.WriteLine($"Created silent navi SFX.", System.Drawing.Color.Green);
             }
 
@@ -113,16 +113,16 @@ namespace VinesauceModSettings
                 {
                     Directory.Delete(awbEmuDir01, true);
                     Directory.Delete(awbEmuDir02, true);
-                    CopyDir(pingSfxDir, awbEmuDir01);
-                    CopyDir(pingSfxDir, awbEmuDir02);
+                    CopyDir(pingSfxDir, Path.GetDirectoryName(awbEmuDir01));
+                    CopyDir(pingSfxDir, Path.GetDirectoryName(awbEmuDir02));
                     _logger.WriteLine($"Copied ping SFX to navi chat directory.", System.Drawing.Color.Green);
                 }
                 else if (!usePingSFX && !Directory.GetFiles(awbEmuDir01, "*.adx", SearchOption.AllDirectories).Any(x => x.Contains("_silence")))
                 {
                     Directory.Delete(awbEmuDir01, true);
                     Directory.Delete(awbEmuDir02, true);
-                    CopyDir(silentSfxDir, awbEmuDir01);
-                    CopyDir(silentSfxDir, awbEmuDir02);
+                    CopyDir(silentSfxDir, Path.GetDirectoryName(awbEmuDir01));
+                    CopyDir(silentSfxDir, Path.GetDirectoryName(awbEmuDir02));
                     _logger.WriteLine($"Copied silent SFX to navi chat directory.", System.Drawing.Color.Green);
                 }
                 else
