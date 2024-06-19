@@ -146,6 +146,7 @@ namespace VinesauceModSettings
             {
                 RewriteChatMessages($"{modDir}\\Mod Files\\Toggleable\\Chat Navi\\chat.txt");
             }
+            UpdateChatPingSFX(modDir, _configuration.UsePingSFX);
 
             // Config Option: New Story
 

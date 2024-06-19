@@ -85,5 +85,75 @@ namespace VinesauceModSettings
                 _logger.WriteLine($"Failed to recompile chat messages, could not locate file:\n\"{Path.GetFullPath(compilerPathTxt)}\"", System.Drawing.Color.Red);
 
         }
+
+        private void UpdateChatPingSFX(string modDir, bool usePingSFX)
+        {
+            string awbEmuDir01 = Path.Combine(modDir, "FEmulator\\AWB\\SPT01.AWB");
+            string awbEmuDir02 = Path.Combine(modDir, "FEmulator\\AWB\\SPT02.AWB");
+            string pingSfxDir = Path.Combine(modDir, "Mod Files\\Toggleable\\Chat Navi\\SFX\\Ping");
+            string silentSfxDir = Path.Combine(modDir, "Mod Files\\Toggleable\\Chat Navi\\SFX\\Silent");
+
+            // Add silent navi SFX to FEmu if it's missing
+            if (!Directory.Exists(awbEmuDir01) && Directory.Exists(silentSfxDir))
+            {
+                CopyDir(silentSfxDir, awbEmuDir01);
+                _logger.WriteLine($"Created silent navi SFX.", System.Drawing.Color.Green);
+            }
+            if (!Directory.Exists(awbEmuDir02) && Directory.Exists(silentSfxDir))
+            {
+                CopyDir(silentSfxDir, awbEmuDir02);
+                _logger.WriteLine($"Created silent navi SFX.", System.Drawing.Color.Green);
+            }
+
+            // Replace SFX based on user's mod settings
+            if (Directory.Exists(awbEmuDir01) && Directory.Exists(awbEmuDir02)
+                && Directory.Exists(pingSfxDir) && Directory.Exists(silentSfxDir))
+            {
+                if (usePingSFX && !Directory.GetFiles(awbEmuDir01, "*.adx", SearchOption.AllDirectories).Any(x => x.Contains("_ping")))
+                {
+                    Directory.Delete(awbEmuDir01, true);
+                    Directory.Delete(awbEmuDir02, true);
+                    CopyDir(pingSfxDir, awbEmuDir01);
+                    CopyDir(pingSfxDir, awbEmuDir02);
+                    _logger.WriteLine($"Copied ping SFX to navi chat directory.", System.Drawing.Color.Green);
+                }
+                else if (!usePingSFX && !Directory.GetFiles(awbEmuDir01, "*.adx", SearchOption.AllDirectories).Any(x => x.Contains("_silence")))
+                {
+                    Directory.Delete(awbEmuDir01, true);
+                    Directory.Delete(awbEmuDir02, true);
+                    CopyDir(silentSfxDir, awbEmuDir01);
+                    CopyDir(silentSfxDir, awbEmuDir02);
+                    _logger.WriteLine($"Copied silent SFX to navi chat directory.", System.Drawing.Color.Green);
+                }
+                else
+                    _logger.WriteLine($"Skipping chat navi SFX update...");
+            }
+            else
+                _logger.WriteLine($"Failed to update chat navi SFX, a required directory was missing.", System.Drawing.Color.Red);
+        }
+
+        public static void CopyDir(string sourceFolder, string destFolder)
+        {
+            if (!Directory.Exists(destFolder) && !File.Exists(destFolder))
+                Directory.CreateDirectory(destFolder);
+
+            // Get Files & Copy
+            string[] files = Directory.GetFiles(sourceFolder);
+            foreach (string file in files)
+            {
+                string name = Path.GetFileName(file);
+                string dest = Path.Combine(destFolder, name);
+                File.Copy(file, dest, true);
+            }
+
+            // Get dirs recursively and copy files
+            string[] folders = Directory.GetDirectories(sourceFolder);
+            foreach (string folder in folders)
+            {
+                string name = Path.GetFileName(folder);
+                string dest = Path.Combine(destFolder, name);
+                CopyDir(folder, dest);
+            }
+        }
     }
 }
