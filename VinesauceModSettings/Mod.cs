@@ -178,11 +178,29 @@ namespace VinesauceModSettings
 
         private void CopyP5RCBTConfig(string modDir, string cbtDir)
         {
-            string cbtConfig = Path.Combine(modDir, "config.toml");
-			string destPath = Path.Combine(cbtDir, "config.toml");
+            string cbtTomlConfig = Path.Combine(modDir, "config.toml");
+            string destTomlPath = Path.Combine(cbtDir, "config.toml");
 
-			File.Copy(cbtConfig,destPath, true);
-            _logger.WriteLine($"Updated P5RCBT config.toml using Vinesauce Mod settings.\n\"{Path.GetFullPath(destPath)}\"", System.Drawing.Color.Green);
+            string cbtReloadConfig = Path.Combine(modDir, "Config.json");
+            string reloadConfigDir = cbtDir.Replace("\\Mods\\", "\\User\\Mods\\");
+            string destReloadConfigPath = Path.Combine(reloadConfigDir, "Config.json");
+
+            _logger.WriteLine($"cbtTomlConfig: {cbtTomlConfig}\n" +
+                $"destTomlPath: {destTomlPath}\n" +
+                $"cbtReloadConfig: {cbtReloadConfig}\n" +
+                $"reloadConfigPath: {destReloadConfigPath}\n" +
+                $"destReloadConfigPath: {cbtTomlConfig}\n", System.Drawing.Color.Yellow);
+
+            if (!File.Exists(cbtReloadConfig))
+                _logger.WriteLine($"Couldn't find cbtReloadConfig path: {cbtReloadConfig}", System.Drawing.Color.Red);
+            if (!File.Exists(destReloadConfigPath))
+                _logger.WriteLine($"Couldn't find destReloadConfigPath path: {destReloadConfigPath}", System.Drawing.Color.Red);
+
+            Directory.CreateDirectory(reloadConfigDir);
+            File.Copy(cbtTomlConfig, destTomlPath, true);
+            File.Copy(cbtReloadConfig, destReloadConfigPath, true);
+
+            _logger.WriteLine($"Updated P5RCBT config.toml and Config.json using Vinesauce Mod settings.", System.Drawing.Color.Green);
         }
 
         #region Standard Overrides
