@@ -14,6 +14,7 @@ using BF.File.Emulator.Interfaces;
 using System.Diagnostics;
 using BMD.File.Emulator.Interfaces;
 using SPD.File.Emulator.Interfaces;
+using Dolphin.ShadowTheHedgehog.RPC;
 
 namespace VinesauceModSettings
 {
@@ -52,7 +53,9 @@ namespace VinesauceModSettings
 		/// The configuration of the currently executing mod.
 		/// </summary>
 		private readonly IModConfig _modConfig;
-	
+
+        private VinesauceRpc _vinesauceRpc;
+
 		public Mod(ModContext context)
 		{
 			_modLoader = context.ModLoader;
@@ -61,6 +64,7 @@ namespace VinesauceModSettings
 			_owner = context.Owner;
 			_configuration = context.Configuration;
 			_modConfig = context.ModConfig;
+            _vinesauceRpc = new VinesauceRpc(Process.GetCurrentProcess());
 
 			var modDir = _modLoader.GetDirectoryForModId(_modConfig.ModId); // modDir variable for file emulation
 
@@ -174,6 +178,23 @@ namespace VinesauceModSettings
             {
                 _logger.WriteLine($"Failed to update P5RCBT config.toml, could not locate Persona 5 Royal Custom Bonus Tweaks mod.", System.Drawing.Color.Red);
             }
+        }
+
+        /* Mod loader actions. */
+        public override void Suspend()
+        {
+            _vinesauceRpc.Suspend();
+        }
+
+        public override void Resume()
+        {
+            _vinesauceRpc.Resume();
+        }
+
+        public override void Unload()
+        {
+            Suspend();
+            _vinesauceRpc.Dispose();
         }
 
         private void CopyP5RCBTConfig(string modDir, string cbtDir)
