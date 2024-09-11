@@ -16,6 +16,7 @@ namespace Dolphin.ShadowTheHedgehog.RPC
         private NetDiscordRpc.DiscordRPC _rpcClient;
 
         private bool _suspended = false;
+        private Timestamps _timestamps; 
 
         /* Initialization / Teardown */
         public VinesauceRpc(Process process)
@@ -23,6 +24,8 @@ namespace Dolphin.ShadowTheHedgehog.RPC
             _rpcClient = new DiscordRPC("1283189895719813232");
             _rpcClient.Initialize();
             _timer = new System.Threading.Timer(Tick, null, new TimeSpan(0), new TimeSpan(0, 0, 0, 5));
+            // Set Timestamp
+            _timestamps = new Timestamps() { Start = DateTime.UtcNow };
         }
 
         public void Dispose()
@@ -53,13 +56,12 @@ namespace Dolphin.ShadowTheHedgehog.RPC
                 // Game State
                 richPresence.State = "Playing";
 
-                // Set Timestamp
-                var timestamps = new Timestamps();
-                var assets = new Assets();
+                // Timestamp
+                _timestamps.End = DateTime.UtcNow;
+                richPresence.Timestamps = _timestamps;
 
-                var stageStartTime = DateTime.UtcNow;
-                timestamps.Start = stageStartTime;
-                richPresence.Timestamps = timestamps;
+                // Assets
+                var assets = new Assets();
                 assets.LargeImageKey = "";
                 richPresence.Assets = null;
 
