@@ -70,7 +70,26 @@ namespace VinesauceModSettings.Configuration
         [DisplayName("Load Emulated Textures")]
         [Description("Use loose unpacked files for texture edits. Disable for quicker startup while testing.")]
         [DefaultValue(true)]
-        public bool EmulateTextures { get; set; } = true; 
+        public bool EmulateTextures { get; set; } = true;
+
+        [Category("Camp BG")]
+        [DisplayName("Mode")]
+        [Description]
+        [DefaultValue(Config.Mode.Off)]
+        public Config.Mode CmpBgColorMode { get; set; }
+
+        [Category("Camp BG")]
+        [DisplayName("Color")]
+        [Description]
+        [DefaultValue("#00FF5C")]
+        public string CmpBgColor { get; set; } = "#00FF5C";
+
+        public enum Mode
+        {
+            Off,
+            Color,
+            ColorSweep
+        }
 
     }
 

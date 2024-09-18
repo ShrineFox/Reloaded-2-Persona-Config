@@ -1,5 +1,5 @@
-﻿using VinesauceModSettings.Configuration;
-using Reloaded.Mod.Interfaces;
+﻿using Reloaded.Mod.Interfaces;
+using VinesauceModSettings.Configuration;
 
 namespace VinesauceModSettings.Template.Configuration
 {

@@ -1,5 +1,4 @@
-﻿using VinesauceModSettings.Configuration;
-using VinesauceModSettings.Template;
+﻿using VinesauceModSettings.Template;
 using Reloaded.Hooks.ReloadedII.Interfaces;
 using Reloaded.Mod.Interfaces;
 using CriFs.V2.Hook;
@@ -15,6 +14,8 @@ using System.Diagnostics;
 using BMD.File.Emulator.Interfaces;
 using SPD.File.Emulator.Interfaces;
 using Dolphin.ShadowTheHedgehog.RPC;
+using Reloaded.Memory.SigScan.ReloadedII.Interfaces;
+using VinesauceModSettings.Configuration;
 
 namespace VinesauceModSettings
 {
@@ -55,8 +56,9 @@ namespace VinesauceModSettings
 		private readonly IModConfig _modConfig;
 
         private VinesauceRpc _vinesauceRpc;
+        private readonly Process _currentProcess;
 
-		public Mod(ModContext context)
+        public Mod(ModContext context)
 		{
 			_modLoader = context.ModLoader;
 			_hooks = context.Hooks;
@@ -178,6 +180,21 @@ namespace VinesauceModSettings
             {
                 _logger.WriteLine($"Failed to update P5RCBT config.toml, could not locate Persona 5 Royal Custom Bonus Tweaks mod.", System.Drawing.Color.Red);
             }
+
+            // ColorStuff by zarroboogs
+            IStartupScanner startupScanner;
+            _modLoader.GetController<IStartupScanner>().TryGetTarget(out startupScanner);
+            SigScanHelper scanHelper = new SigScanHelper(startupScanner);
+            _currentProcess = Process.GetCurrentProcess();
+            IntPtr baseAddress = this._currentProcess.MainModule.BaseAddress;
+            PatchContext patchContext = new PatchContext
+            {
+                BaseAddress = baseAddress,
+                Hooks = this._hooks,
+                Config = _configuration,
+                ScanHelper = scanHelper
+            };
+            CmpBgColor.Activate(patchContext);
         }
 
         /* Mod loader actions. */
@@ -226,12 +243,13 @@ namespace VinesauceModSettings
 
         #region Standard Overrides
         public override void ConfigurationUpdated(Config configuration)
-	{
-		// Apply settings from configuration.
-		// ... your code here.
-		_configuration = configuration;
-		_logger.WriteLine($"[{_modConfig.ModId}] Config Updated: Applying");
-	}
+	    {
+		    // Apply settings from configuration.
+		    // ... your code here.
+		    _configuration = configuration;
+		    _logger.WriteLine($"[{_modConfig.ModId}] Config Updated: Applying");
+            CmpBgColor.UpdateConfig(configuration);
+        }
 	#endregion
 	
 		#region For Exports, Serialization etc.
