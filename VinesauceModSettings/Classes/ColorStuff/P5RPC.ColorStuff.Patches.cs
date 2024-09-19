@@ -2,11 +2,13 @@
 using System.Globalization;
 using System.Runtime.CompilerServices;
 using System.Timers;
+using P5RPC.ColorStuff.Patches.Common;
+using P5RPC.ColorStuff.Utilities;
 using Reloaded.Hooks.Definitions;
 using Reloaded.Hooks.Definitions.X64;
-using VinesauceModSettings.Configuration;
 
-namespace VinesauceModSettings
+// original code by zarroboogs
+namespace P5RPC.ColorStuff.Patches
 {
     internal class CmpBgColor
     {
@@ -16,42 +18,17 @@ namespace VinesauceModSettings
             CmpBgColor._g = (color >> 16 & 255U);
             CmpBgColor._b = (color >> 8 & 255U);
         }
+        
 
-        public static void UpdateConfig(Config config)
+        public static void UpdateConfig()
         {
-            CmpBgColor._config = config;
+            // Set color to green (hardcoded)
             uint num;
-            if (CmpBgColor._config.CmpBgColor.Length == 7 && uint.TryParse(CmpBgColor._config.CmpBgColor.TrimStart('#'), NumberStyles.HexNumber, null, out num))
-            {
-                Logger logger = CmpBgColor._logger;
-                DefaultInterpolatedStringHandler defaultInterpolatedStringHandler = new DefaultInterpolatedStringHandler(19, 1);
-                defaultInterpolatedStringHandler.AppendLiteral("Parsed CmpBgColor #");
-                defaultInterpolatedStringHandler.AppendFormatted<uint>(num, "X6");
-                logger.Info(defaultInterpolatedStringHandler.ToStringAndClear());
-                CmpBgColor._color = num;
-            }
-            else
-            {
-                CmpBgColor._logger.Error("Failed to parse CmpBgColor - format #RRGGBB, e.g. #FF0023");
-            }
-            switch (CmpBgColor._config.CmpBgColorMode)
-            {
-                case Config.Mode.Off:
-                    CmpBgColor._enable = false;
-                    CmpBgColor._colorSweep.Enabled = false;
-                    return;
-                case Config.Mode.Color:
-                    CmpBgColor.SetCmpBgColor(CmpBgColor._color << 8 | 255U);
-                    CmpBgColor._enable = true;
-                    CmpBgColor._colorSweep.Enabled = false;
-                    return;
-                case Config.Mode.ColorSweep:
-                    CmpBgColor._enable = true;
-                    CmpBgColor._colorSweep.Enabled = true;
-                    return;
-                default:
-                    return;
-            }
+            uint.TryParse("00FF5C", NumberStyles.HexNumber, null, out num);
+            CmpBgColor._color = num;
+            CmpBgColor._enable = true;
+            CmpBgColor._colorSweep.Enabled = false;
+            SetCmpBgColor(CmpBgColor._color << 8 | 255U);
         }
 
         public static void Activate(in PatchContext context)
@@ -64,7 +41,7 @@ namespace VinesauceModSettings
                 Interval = 16.66666603088379
             };
             CmpBgColor._colorSweep.Elapsed += CmpBgColor.ColorSweep;
-            CmpBgColor.UpdateConfig(_config);
+            CmpBgColor.UpdateConfig();
             context.ScanHelper.FindPatternOffset("48 8B C4 48 89 58 08 48 89 68 10 48 89 70 18 48 89 78 20 41 56 48 81 EC 90 00 00 00 48 8B BC 24 D0 00 00 00 0F", delegate (uint o)
             {
                 CmpBgColor._testHook = hooks.CreateHook<CmpBgColor.sub_140C7C9E0>(new CmpBgColor.sub_140C7C9E0(CmpBgColor.TestHookImpl), (long)baseAddress + (long)((ulong)o));
@@ -78,7 +55,7 @@ namespace VinesauceModSettings
                 }
                 CmpBgColor._testHook2.Activate();
             }, "P_CMP_BG_COLOR_2");
-            context.ScanHelper.FindPatternOffset("48 8B C4 53 48 81 EC E0 00 00 00 44", delegate (uint o)
+            context.ScanHelper.FindPatternOffset("48 8B C4 57 48 81 EC E0 00 00 00 44", delegate (uint o) // 0F 29 40 ?? is new in P5R 1.0.4
             {
                 CmpBgColor._testHook3 = hooks.CreateHook<CmpBgColor.sub_140C7DB80>(new CmpBgColor.sub_140C7DB80(CmpBgColor.TestHook3Impl), (long)baseAddress + (long)((ulong)o));
                 CmpBgColor._testHook3.Activate();
@@ -143,7 +120,7 @@ namespace VinesauceModSettings
 
         private const string P_CMP_BG_COLOR_2 = "48 8B C4 48 89 58 18 48 89 70 20 F3 0F 11 40 08 55 57 41 55";
 
-        private const string P_CMP_BG_COLOR_3 = "48 8B C4 53 48 81 EC E0 00 00 00 44";
+        private const string P_CMP_BG_COLOR_3 = "48 8B C4 57 48 81 EC E0 00 00 00 44"; // 0F 29 40 ?? is new in P5R 1.0.4
 
         private const string P_CMP_BG_COLOR_4 = "40 56 48 81 EC 80 00 00 00 80";
 
@@ -165,7 +142,7 @@ namespace VinesauceModSettings
         private static System.Timers.Timer _colorSweep = null;
 
         // Token: 0x04000037 RID: 55
-        private static Config _config = null;
+        private static VinesauceModSettings.Configuration.Config _config = null;
 
         // Token: 0x04000038 RID: 56
         private static bool _enable = false;

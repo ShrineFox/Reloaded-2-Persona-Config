@@ -16,6 +16,9 @@ using SPD.File.Emulator.Interfaces;
 using Dolphin.ShadowTheHedgehog.RPC;
 using Reloaded.Memory.SigScan.ReloadedII.Interfaces;
 using VinesauceModSettings.Configuration;
+using P5RPC.ColorStuff.Patches;
+using P5RPC.ColorStuff.Utilities;
+using P5RPC.ColorStuff.Patches.Common;
 
 namespace VinesauceModSettings
 {
@@ -184,13 +187,13 @@ namespace VinesauceModSettings
             // ColorStuff by zarroboogs
             IStartupScanner startupScanner;
             _modLoader.GetController<IStartupScanner>().TryGetTarget(out startupScanner);
-            SigScanHelper scanHelper = new SigScanHelper(startupScanner);
+            SigScanHelper scanHelper = new SigScanHelper(_logger, startupScanner);
             _currentProcess = Process.GetCurrentProcess();
-            IntPtr baseAddress = this._currentProcess.MainModule.BaseAddress;
+            IntPtr baseAddress = _currentProcess.MainModule.BaseAddress;
             PatchContext patchContext = new PatchContext
             {
                 BaseAddress = baseAddress,
-                Hooks = this._hooks,
+                Hooks = _hooks,
                 Config = _configuration,
                 ScanHelper = scanHelper
             };
@@ -247,8 +250,8 @@ namespace VinesauceModSettings
 		    // Apply settings from configuration.
 		    // ... your code here.
 		    _configuration = configuration;
-		    _logger.WriteLine($"[{_modConfig.ModId}] Config Updated: Applying");
-            CmpBgColor.UpdateConfig(configuration);
+		    _logger.WriteLine($"[{_modConfig.ModId}] Applying Green Menu Color (only works properly with P5R v1.0.3)...");
+            CmpBgColor.UpdateConfig();
         }
 	#endregion
 	

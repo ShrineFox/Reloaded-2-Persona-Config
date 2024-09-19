@@ -72,25 +72,6 @@ namespace VinesauceModSettings.Configuration
         [DefaultValue(true)]
         public bool EmulateTextures { get; set; } = true;
 
-        [Category("Camp BG")]
-        [DisplayName("Mode")]
-        [Description]
-        [DefaultValue(Config.Mode.Off)]
-        public Config.Mode CmpBgColorMode { get; set; }
-
-        [Category("Camp BG")]
-        [DisplayName("Color")]
-        [Description]
-        [DefaultValue("#00FF5C")]
-        public string CmpBgColor { get; set; } = "#00FF5C";
-
-        public enum Mode
-        {
-            Off,
-            Color,
-            ColorSweep
-        }
-
     }
 
     /// <summary>
