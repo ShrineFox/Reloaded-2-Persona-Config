@@ -1,7 +1,7 @@
-﻿using VinesauceModSettings.Configuration;
+﻿using p5rpc.menucolor.Configuration;
 using Reloaded.Mod.Interfaces;
 
-namespace VinesauceModSettings.Template.Configuration
+namespace p5rpc.menucolor.Template.Configuration
 {
 	/// <summary>
 	/// Creates the various different configurations used by the mod.

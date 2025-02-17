@@ -3,13 +3,13 @@
  * to make it easier to upgrade to newer versions of the template.
 */
 
-using VinesauceModSettings.Configuration;
-using VinesauceModSettings.Template.Configuration;
+using p5rpc.menucolor.Configuration;
+using p5rpc.menucolor.Template.Configuration;
 using Reloaded.Hooks.ReloadedII.Interfaces;
 using Reloaded.Mod.Interfaces;
 using Reloaded.Mod.Interfaces.Internal;
 
-namespace VinesauceModSettings.Template
+namespace p5rpc.menucolor.Template
 {
 	public class Startup : IMod
 	{

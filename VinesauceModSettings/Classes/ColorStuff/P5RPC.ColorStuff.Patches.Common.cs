@@ -10,7 +10,7 @@ namespace P5RPC.ColorStuff.Patches.Common
     {
         public IntPtr BaseAddress { readonly get; set; }
 
-        public VinesauceModSettings.Configuration.Config Config { readonly get; set; }
+        public p5rpc.menucolor.Configuration.Config Config { readonly get; set; }
 
         public SigScanHelper ScanHelper { readonly get; set; }
 

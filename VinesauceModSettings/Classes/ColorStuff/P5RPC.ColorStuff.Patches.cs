@@ -24,7 +24,7 @@ namespace P5RPC.ColorStuff.Patches
         {
             // Set color to green (hardcoded)
             uint num;
-            uint.TryParse("00FF5C", NumberStyles.HexNumber, null, out num);
+            uint.TryParse("4B0082", NumberStyles.HexNumber, null, out num); // dark purple
             CmpBgColor._color = num;
             CmpBgColor._enable = true;
             CmpBgColor._colorSweep.Enabled = false;
@@ -142,7 +142,7 @@ namespace P5RPC.ColorStuff.Patches
         private static System.Timers.Timer _colorSweep = null;
 
         // Token: 0x04000037 RID: 55
-        private static VinesauceModSettings.Configuration.Config _config = null;
+        private static p5rpc.menucolor.Configuration.Config _config = null;
 
         // Token: 0x04000038 RID: 56
         private static bool _enable = false;

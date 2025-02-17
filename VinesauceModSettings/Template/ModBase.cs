@@ -1,6 +1,6 @@
-﻿using VinesauceModSettings.Configuration;
+﻿using p5rpc.menucolor.Configuration;
 
-namespace VinesauceModSettings.Template
+namespace p5rpc.menucolor.Template
 {
 	/// <summary>
 	/// Base class for implementing mod functionality.

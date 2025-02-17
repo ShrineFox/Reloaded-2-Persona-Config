@@ -1,7 +1,7 @@
 ﻿using Reloaded.Mod.Interfaces;
-using VinesauceModSettings.Configuration;
+using p5rpc.menucolor.Configuration;
 
-namespace VinesauceModSettings.Template.Configuration
+namespace p5rpc.menucolor.Template.Configuration
 {
 	public class Configurator : IConfiguratorV3
 	{

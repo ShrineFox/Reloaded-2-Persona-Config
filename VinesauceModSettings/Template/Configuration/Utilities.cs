@@ -1,6 +1,6 @@
 ﻿using System.Diagnostics;
 
-namespace VinesauceModSettings.Template.Configuration
+namespace p5rpc.menucolor.Template.Configuration
 {
 	public class Utilities
 	{

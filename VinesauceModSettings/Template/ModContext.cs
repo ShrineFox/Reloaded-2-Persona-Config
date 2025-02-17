@@ -1,8 +1,8 @@
-﻿using VinesauceModSettings.Configuration;
+﻿using p5rpc.menucolor.Configuration;
 using Reloaded.Mod.Interfaces;
 using IReloadedHooks = Reloaded.Hooks.ReloadedII.Interfaces.IReloadedHooks;
 
-namespace VinesauceModSettings.Template
+namespace p5rpc.menucolor.Template
 {
 	/// <summary>
 	/// Represents information passed in from the mod loader template to the implementing mod.
