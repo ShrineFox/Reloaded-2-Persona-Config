@@ -72,6 +72,12 @@ namespace VinesauceModSettings.Configuration
         [DefaultValue(true)]
         public bool EmulateTextures { get; set; } = true;
 
+        [Category("Miscellaneous")]
+        [DisplayName("Load Repacked Textures")]
+        [Description("Use repacked files for texture edits. Disable to ensure only unpacked textures are loaded.")]
+        [DefaultValue(true)]
+        public bool UseRepackedTextures { get; set; } = true;
+
     }
 
     /// <summary>

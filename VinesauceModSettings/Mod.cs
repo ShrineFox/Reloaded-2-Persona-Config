@@ -162,7 +162,10 @@ namespace VinesauceModSettings
             if (_configuration.NewStory)
             {
                 criFsApi.AddProbingPath($"{modDir}\\Mod Files\\Toggleable\\New Story\\CPK");
-                criFsApi.AddProbingPath($"{modDir}\\Mod Files\\Toggleable\\New Story\\Textures\\RepackedBINs");
+                if (_configuration.UseRepackedTextures)
+                {
+                    criFsApi.AddProbingPath($"{modDir}\\Mod Files\\Toggleable\\New Story\\Textures\\RepackedBINs");
+                }
                 criFsApi.AddProbingPath($"{modDir}\\Mod Files\\Toggleable\\New Story\\Scripts\\CPK");
                 _BfEmulator.AddDirectory($"{modDir}\\Mod Files\\Toggleable\\New Story\\Scripts\\BF");
                 _BmdEmulator.AddDirectory($"{modDir}\\Mod Files\\Toggleable\\New Story\\Scripts\\BMD");
