@@ -1,24 +1,23 @@
-﻿using VinesauceModSettings.Template;
-using Reloaded.Hooks.ReloadedII.Interfaces;
-using Reloaded.Mod.Interfaces;
-using CriFs.V2.Hook;
-using CriFs.V2.Hook.Interfaces;
-using PAK.Stream.Emulator;
-using PAK.Stream.Emulator.Interfaces;
-using Reloaded.Mod.Interfaces.Internal;
-using BGME.Framework;
-using BGME.Framework.Interfaces;
-using BF.File.Emulator;
-using BF.File.Emulator.Interfaces;
-using System.Diagnostics;
-using BMD.File.Emulator.Interfaces;
-using SPD.File.Emulator.Interfaces;
-using Dolphin.ShadowTheHedgehog.RPC;
-using Reloaded.Memory.SigScan.ReloadedII.Interfaces;
+﻿using System.Diagnostics;
+using YamlDotNet.Serialization.NamingConventions;
+using YamlDotNet.Serialization;
+using VinesauceModSettings.Template;
 using VinesauceModSettings.Configuration;
 using P5RPC.ColorStuff.Patches;
 using P5RPC.ColorStuff.Utilities;
 using P5RPC.ColorStuff.Patches.Common;
+using Reloaded.Hooks.ReloadedII.Interfaces;
+using Reloaded.Mod.Interfaces;
+using Reloaded.Memory.SigScan.ReloadedII.Interfaces;
+using Dolphin.ShadowTheHedgehog.RPC;
+using CriFs.V2.Hook.Interfaces;
+using PAK.Stream.Emulator.Interfaces;
+using BF.File.Emulator.Interfaces;
+using BMD.File.Emulator.Interfaces;
+using SPD.File.Emulator.Interfaces;
+using BGME.Framework.Interfaces;
+using Ryo.Interfaces;
+using Ryo.Interfaces.Classes;
 
 namespace VinesauceModSettings
 {
@@ -79,24 +78,22 @@ namespace VinesauceModSettings
             // If you want to implement e.g. unload support in your mod,
             // and some other neat features, override the methods in ModBase.
 
-            // TODO: Implement some mod logic
+
 
             // Define controllers and other variables, set warning messages
             var criFsController = _modLoader.GetController<ICriFsRedirectorApi>();
 			if (criFsController == null || !criFsController.TryGetTarget(out var criFsApi))
 			{
-				_logger.WriteLine($"Something in CriFS shit its pants! Normal files will not load properly!", System.Drawing.Color.Red);
+				_logger.WriteLine($"Something in CriFS shit its pants! Edited binary files will not load properly!", System.Drawing.Color.Red);
 				return;
             }
 
-			/*
-            var AwbEmulatorController = _modLoader.GetController<IAwbEmulator>();
-            if (AwbEmulatorController == null || !AwbEmulatorController.TryGetTarget(out var _AwbEmulator))
+            var RyoApi = _modLoader.GetController<IRyoApi>();
+            if (RyoApi == null || !RyoApi.TryGetTarget(out var _RyoApi))
             {
-                _logger.WriteLine($"Something in AWB Emulator shit its pants! Normal files will not load properly!", System.Drawing.Color.Red);
+                _logger.WriteLine($"Something in Ryo shit its pants! Randomized voice/sfx audio will not load properly!", System.Drawing.Color.Red);
                 return;
             }
-			*/
 
             var PakEmulatorController = _modLoader.GetController<IPakEmulator>();
             if (PakEmulatorController == null || !PakEmulatorController.TryGetTarget(out var _PakEmulator))
@@ -105,43 +102,50 @@ namespace VinesauceModSettings
                 return;
             }
 
-            var BfEmulatorController = _modLoader.GetController<IBfEmulator>();
-            if (BfEmulatorController == null || !BfEmulatorController.TryGetTarget(out var _BfEmulator))
-            {
-                _logger.WriteLine($"Something in BF Emulator shit its pants! Files requiring bf merging will not load properly!", System.Drawing.Color.Red);
-                return;
-            }
-
             var SpdEmulatorController = _modLoader.GetController<ISpdEmulator>();
             if (SpdEmulatorController == null || !SpdEmulatorController.TryGetTarget(out var _SpdEmulator))
             {
-                _logger.WriteLine($"Something in BF Emulator shit its pants! Files requiring bf merging will not load properly!", System.Drawing.Color.Red);
+                _logger.WriteLine($"Something in BF Emulator shit its pants! Files requiring sprite merging will not load properly!", System.Drawing.Color.Red);
+                return;
+            }
+
+            var BfEmulatorController = _modLoader.GetController<IBfEmulator>();
+            if (BfEmulatorController == null || !BfEmulatorController.TryGetTarget(out var _BfEmulator))
+            {
+                _logger.WriteLine($"Something in BF Emulator shit its pants! Files requiring script merging will not load properly!", System.Drawing.Color.Red);
                 return;
             }
 
             var BmdEmulatorController = _modLoader.GetController<IBmdEmulator>();
             if (BmdEmulatorController == null || !BmdEmulatorController.TryGetTarget(out var _BmdEmulator))
             {
-                _logger.WriteLine($"Something in BMD Emulator shit its pants! Files requiring bmd merging will not load properly!", System.Drawing.Color.Red);
+                _logger.WriteLine($"Something in BMD Emulator shit its pants! Files requiring text merging will not load properly!", System.Drawing.Color.Red);
                 return;
             }
 
             var BGMEController = _modLoader.GetController<IBgmeApi>();
 			if (BGMEController == null || !BGMEController.TryGetTarget(out var _BGME))
 			{
-				_logger.WriteLine($"Something in BGME shit its pants! Files requiring bin merging will not load properly!", System.Drawing.Color.Red);
+				_logger.WriteLine($"Something in BGME shit its pants! Randomized battle music will not load properly!", System.Drawing.Color.Red);
 				return;
             }
 
             // Main Files
             criFsApi.AddProbingPath($"{modDir}\\Mod Files\\Main\\_CPK");
+            criFsApi.AddProbingPath($"{modDir}\\Mod Files\\Main\\_Models");
+            criFsApi.AddProbingPath($"{modDir}\\Mod Files\\Main\\_Personas");
+            criFsApi.AddProbingPath($"{modDir}\\Mod Files\\Main\\_Fields");
+            criFsApi.AddProbingPath($"{modDir}\\Mod Files\\Main\\_Tables");
+            criFsApi.AddProbingPath($"{modDir}\\Mod Files\\Main\\_UI");
             _BGME.AddFolder($"{modDir}\\Mod Files\\Main\\BGME");
             _BfEmulator.AddDirectory($"{modDir}\\Mod Files\\Main\\BF");
             _BmdEmulator.AddDirectory($"{modDir}\\Mod Files\\Main\\BMD");
             _PakEmulator.AddDirectory($"{modDir}\\Mod Files\\Main\\PAK");
             _SpdEmulator.AddDirectory($"{modDir}\\Mod Files\\Main\\SPD");
 
+            //
             // Toggleable
+            // 
 
             // Config Option: Alt Scoot AoA by NeonWillowLeaf
             if (_configuration.NeonWillowLeaf)
@@ -166,9 +170,12 @@ namespace VinesauceModSettings
                 {
                     criFsApi.AddProbingPath($"{modDir}\\Mod Files\\Toggleable\\New Story\\Textures\\RepackedBINs");
                 }
-                criFsApi.AddProbingPath($"{modDir}\\Mod Files\\Toggleable\\New Story\\Scripts\\CPK");
-                _BfEmulator.AddDirectory($"{modDir}\\Mod Files\\Toggleable\\New Story\\Scripts\\BF");
-                _BmdEmulator.AddDirectory($"{modDir}\\Mod Files\\Toggleable\\New Story\\Scripts\\BMD");
+                if (_configuration.UseCustomScripts)
+                {
+                    criFsApi.AddProbingPath($"{modDir}\\Mod Files\\Toggleable\\New Story\\Scripts\\CPK");
+                    _BfEmulator.AddDirectory($"{modDir}\\Mod Files\\Toggleable\\New Story\\Scripts\\BF");
+                    _BmdEmulator.AddDirectory($"{modDir}\\Mod Files\\Toggleable\\New Story\\Scripts\\BMD");
+                }
 
                 // Config Option: Emulate Unpacked Palace Textures
                 if (_configuration.EmulateTextures)
@@ -186,6 +193,19 @@ namespace VinesauceModSettings
             {
                 _logger.WriteLine($"Failed to update P5RCBT config.toml, could not locate Persona 5 Royal Custom Bonus Tweaks mod.", System.Drawing.Color.Red);
             }
+
+            // Config Option: Emulate ACB Files
+            if (_configuration.UseEmulatedACBs)
+                foreach (string yamlPath in Directory.GetFiles($"{modDir}\\Mod Files\\Main\\ACB", "*.yaml", SearchOption.AllDirectories))
+                {
+                    var audioConfig = ParseConfigFile(yamlPath, _logger);
+                    audioConfig.AcbName = FindAcbFolder(yamlPath);
+                    _RyoApi.AddAudioPath(Path.GetDirectoryName(yamlPath), audioConfig);
+                }
+            // Config Option: Use Silenced Base AWB files
+            if (_configuration.UseSilencedBaseAWBs)
+                criFsApi.AddProbingPath($"{modDir}\\Mod Files\\Toggleable\\Silence");
+
 
             // ColorStuff by zarroboogs
             IStartupScanner startupScanner;
@@ -247,6 +267,44 @@ namespace VinesauceModSettings
             _logger.WriteLine($"Updated P5RCBT config.toml and Config.json using Vinesauce Mod settings.", System.Drawing.Color.Green);
         }
 
+        private static AudioConfig? ParseConfigFile(string configFile, ILogger _logger)
+        {
+            try
+            {
+                _logger.WriteLine($"Loading audio config: {configFile}");
+                var config = YamlSerializer.DeserializeFile<AudioConfig>(configFile);
+                return config;
+            }
+            catch (Exception ex)
+            {
+                _logger.WriteLine($"Failed to parse audio config.\nFile: {configFile}");
+                return null;
+            }
+        }
+
+        public static string FindAcbFolder(string startPath)
+        {
+            var dir = new DirectoryInfo(startPath);
+
+            if (!dir.Exists && File.Exists(startPath))
+                dir = new FileInfo(startPath).Directory;
+
+            while (dir != null)
+            {
+                foreach (var subDir in dir.GetDirectories())
+                {
+                    if (subDir.Name.EndsWith(".ACB", StringComparison.OrdinalIgnoreCase))
+                    {
+                        return subDir.FullName;
+                    }
+                }
+
+                dir = dir.Parent;
+            }
+
+            return null;
+        }
+
         #region Standard Overrides
         public override void ConfigurationUpdated(Config configuration)
 	    {
@@ -264,5 +322,15 @@ namespace VinesauceModSettings
 #pragma warning restore CS8618
 	#endregion
 	}
+
+    public static class YamlSerializer
+    {
+        private static readonly IDeserializer deserializer = new DeserializerBuilder()
+            .WithNamingConvention(UnderscoredNamingConvention.Instance)
+            .Build();
+
+        public static T DeserializeFile<T>(string filePath)
+            => deserializer.Deserialize<T>(File.ReadAllText(filePath));
+    }
 
 }

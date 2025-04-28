@@ -1,9 +1,5 @@
 ﻿using VinesauceModSettings.Template.Configuration;
-using Reloaded.Mod.Interfaces.Structs;
 using System.ComponentModel;
-using CriFs.V2.Hook;
-using CriFs.V2.Hook.Interfaces;
-using System.Reflection;
 
 namespace VinesauceModSettings.Configuration
 {
@@ -60,24 +56,41 @@ namespace VinesauceModSettings.Configuration
         [DefaultValue(false)]
         public bool NeonWillowLeaf { get; set; } = false; 
 
-        [Category("Miscellaneous")]
-        [DisplayName("Overwrite P5RCBT Config")]
-        [Description("Disable this option if you want to use your own P5RCBT settings.")]
-        [DefaultValue(true)]
-        public bool OverwriteP5RCBTConfig { get; set; } = true; 
-
-        [Category("Miscellaneous")]
+        [Category("Textures")]
         [DisplayName("Load Emulated Textures")]
         [Description("Use loose unpacked files for texture edits. Disable for quicker startup while testing.")]
         [DefaultValue(true)]
         public bool EmulateTextures { get; set; } = true;
 
-        [Category("Miscellaneous")]
+        [Category("Textures")]
         [DisplayName("Load Repacked Textures")]
         [Description("Use repacked files for texture edits. Disable to ensure only unpacked textures are loaded.")]
         [DefaultValue(true)]
         public bool UseRepackedTextures { get; set; } = true;
 
+        [Category("Sound")]
+        [DisplayName("Use Emulated ACBs")]
+        [Description("Use randomized voice and music replacements. Disable to use vanilla P5R sound for faster startup.")]
+        [DefaultValue(true)]
+        public bool UseEmulatedACBs { get; set; } = true;
+
+        [Category("Sound")]
+        [DisplayName("Use Silenced Base AWBs")]
+        [Description("Silence voice clips by default. Emulated ACB/AWB files override this. Disable for faster startup.")]
+        [DefaultValue(true)]
+        public bool UseSilencedBaseAWBs { get; set; } = true;
+
+        [Category("Debug")]
+        [DisplayName("Overwrite P5RCBT Config")]
+        [Description("Disable this option if you want to use your own P5RCBT settings.")]
+        [DefaultValue(true)]
+        public bool OverwriteP5RCBTConfig { get; set; } = true;
+
+        [Category("Debug")]
+        [DisplayName("Use Custom Scripts")]
+        [Description("Disable this option for faster startup when not testing script edits.")]
+        [DefaultValue(true)]
+        public bool UseCustomScripts { get; set; } = true;
     }
 
     /// <summary>
