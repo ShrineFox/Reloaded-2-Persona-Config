@@ -199,7 +199,8 @@ namespace VinesauceModSettings
                 foreach (string yamlPath in Directory.GetFiles($"{modDir}\\Mod Files\\Main\\ACB", "*.yaml", SearchOption.AllDirectories))
                 {
                     var audioConfig = ParseConfigFile(yamlPath, _logger);
-                    audioConfig.AcbName = FindAcbFolder(yamlPath);
+                    if (string.IsNullOrEmpty(audioConfig.AcbName))
+                        audioConfig.AcbName = Path.GetFileName(FindAcbFolder(yamlPath)).ToLower().Replace(".acb","");
                     _RyoApi.AddAudioPath(Path.GetDirectoryName(yamlPath), audioConfig);
                 }
             // Config Option: Use Silenced Base AWB files
