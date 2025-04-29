@@ -55,7 +55,6 @@
     <ProjectReference Include="..\..\FileEmulationFramework\Emulator\Interfaces\BMD.File.Emulator.Interfaces\BMD.File.Emulator.Interfaces.csproj" />
     <ProjectReference Include="..\..\FileEmulationFramework\Emulator\Interfaces\PAK.Stream.Emulator.Interfaces\PAK.Stream.Emulator.Interfaces.csproj" />
     <ProjectReference Include="..\..\FileEmulationFramework\Emulator\Interfaces\SPD.File.Emulator.Interfaces\SPD.File.Emulator.Interfaces.csproj" />
-    <ProjectReference Include="..\..\Ryo\Ryo.Interfaces\Ryo.Interfaces.csproj" />
   </ItemGroup>
 
 </Project>

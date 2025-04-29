@@ -19,8 +19,6 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BMD.File.Emulator.Interface
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SPD.File.Emulator.Interfaces", "..\FileEmulationFramework\Emulator\Interfaces\SPD.File.Emulator.Interfaces\SPD.File.Emulator.Interfaces.csproj", "{EE7B28C9-E6CA-4469-B665-D31997FDFB28}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Ryo.Interfaces", "..\Ryo\Ryo.Interfaces\Ryo.Interfaces.csproj", "{BB73E167-3AC9-F169-A93D-FBEE920FB5DB}"
-EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -55,10 +53,6 @@ Global
 		{EE7B28C9-E6CA-4469-B665-D31997FDFB28}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{EE7B28C9-E6CA-4469-B665-D31997FDFB28}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{EE7B28C9-E6CA-4469-B665-D31997FDFB28}.Release|Any CPU.Build.0 = Release|Any CPU
-		{BB73E167-3AC9-F169-A93D-FBEE920FB5DB}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{BB73E167-3AC9-F169-A93D-FBEE920FB5DB}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{BB73E167-3AC9-F169-A93D-FBEE920FB5DB}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{BB73E167-3AC9-F169-A93D-FBEE920FB5DB}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

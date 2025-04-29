@@ -16,8 +16,6 @@ using BF.File.Emulator.Interfaces;
 using BMD.File.Emulator.Interfaces;
 using SPD.File.Emulator.Interfaces;
 using BGME.Framework.Interfaces;
-using Ryo.Interfaces;
-using Ryo.Interfaces.Classes;
 
 namespace VinesauceModSettings
 {
@@ -88,12 +86,14 @@ namespace VinesauceModSettings
 				return;
             }
 
+            /*
             var RyoApi = _modLoader.GetController<IRyoApi>();
             if (RyoApi == null || !RyoApi.TryGetTarget(out var _RyoApi))
             {
                 _logger.WriteLine($"Something in Ryo shit its pants! Randomized voice/sfx audio will not load properly!", System.Drawing.Color.Red);
                 return;
             }
+            */
 
             var PakEmulatorController = _modLoader.GetController<IPakEmulator>();
             if (PakEmulatorController == null || !PakEmulatorController.TryGetTarget(out var _PakEmulator))
@@ -195,14 +195,33 @@ namespace VinesauceModSettings
             }
 
             // Config Option: Emulate ACB Files
+            /*
             if (_configuration.UseEmulatedACBs)
                 foreach (string yamlPath in Directory.GetFiles($"{modDir}\\Mod Files\\Main\\ACB", "*.yaml", SearchOption.AllDirectories))
                 {
                     var audioConfig = ParseConfigFile(yamlPath, _logger);
                     if (string.IsNullOrEmpty(audioConfig.AcbName))
-                        audioConfig.AcbName = Path.GetFileName(FindAcbFolder(yamlPath)).ToLower().Replace(".acb","");
+                        audioConfig.AcbName = Path.GetFileName(FindAcbFolder(yamlPath)).Replace(".ACB", "").Replace(".acb", "");
+                    if (audioConfig.UsePlayerVolume == null)
+                        audioConfig.UsePlayerVolume = true;
+                    if (audioConfig.PlayerId == null)
+                        audioConfig.PlayerId = -1;
+                    if (audioConfig.IsEnabled == null)
+                        audioConfig.IsEnabled = true;
+                    if (audioConfig.CategoryIds == null)
+                        audioConfig.CategoryIds = new int[] { 3 };
+                    if (audioConfig.VolumeCategoryId == null)
+                        audioConfig.VolumeCategoryId = 3;
+                    if (audioConfig.PlaybackMode == null)
+                        audioConfig.PlaybackMode = Ryo.Interfaces.Enums.PlaybackMode.Random;
+                    audioConfig.Apply(audioConfig);
                     _RyoApi.AddAudioPath(Path.GetDirectoryName(yamlPath), audioConfig);
+
+                    string jsonText = JsonConvert.SerializeObject(audioConfig, Newtonsoft.Json.Formatting.Indented);
+                    _logger.WriteLine($"{Path.GetDirectoryName(yamlPath)}\r\n{jsonText}", System.Drawing.Color.AliceBlue);
                 }
+            */
+
             // Config Option: Use Silenced Base AWB files
             if (_configuration.UseSilencedBaseAWBs)
                 criFsApi.AddProbingPath($"{modDir}\\Mod Files\\Toggleable\\Silence");
@@ -268,6 +287,7 @@ namespace VinesauceModSettings
             _logger.WriteLine($"Updated P5RCBT config.toml and Config.json using Vinesauce Mod settings.", System.Drawing.Color.Green);
         }
 
+        /*
         private static AudioConfig? ParseConfigFile(string configFile, ILogger _logger)
         {
             try
@@ -305,6 +325,7 @@ namespace VinesauceModSettings
 
             return null;
         }
+        */
 
         #region Standard Overrides
         public override void ConfigurationUpdated(Config configuration)

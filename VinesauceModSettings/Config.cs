@@ -69,12 +69,6 @@ namespace VinesauceModSettings.Configuration
         public bool UseRepackedTextures { get; set; } = true;
 
         [Category("Sound")]
-        [DisplayName("Use Emulated ACBs")]
-        [Description("Use randomized voice and music replacements. Disable to use vanilla P5R sound for faster startup.")]
-        [DefaultValue(true)]
-        public bool UseEmulatedACBs { get; set; } = true;
-
-        [Category("Sound")]
         [DisplayName("Use Silenced Base AWBs")]
         [Description("Silence voice clips by default. Emulated ACB/AWB files override this. Disable for faster startup.")]
         [DefaultValue(true)]
