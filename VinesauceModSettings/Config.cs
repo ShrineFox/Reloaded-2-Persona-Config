@@ -29,7 +29,19 @@ namespace VinesauceModSettings.Configuration
         [DisplayName("Replace Story Events")]
         [Description("Skip the game's original story events in favor of new material.")]
         [DefaultValue(true)]
-        public bool NewStory { get; set; } = true; 
+        public bool NewStory { get; set; } = true;
+
+        [Category("New Story Mode")]
+        [DisplayName("Reskin Bosses")]
+        [Description("Use the Vinesauce-themed boss fights. Disable for vanilla.")]
+        [DefaultValue(true)]
+        public bool NewBosses { get; set; } = true;
+
+        [Category("New Story Mode")]
+        [DisplayName("Reskin Dungeons")]
+        [Description("Use the Vinesauce-themed Palaces. Disable for vanilla.")]
+        [DefaultValue(true)]
+        public bool NewDungeons { get; set; } = true;
 
         [Category("Chat Messages")]
         [DisplayName("Randomize Chat Messages")]
@@ -37,11 +49,13 @@ namespace VinesauceModSettings.Configuration
         [DefaultValue(false)]
         public bool RandomizeChatMsgs { get; set; } = true; 
 
+        /*
         [Category("Chat Messages")]
         [DisplayName("Mimic Twitch Chat")]
         [Description("Shows multiple navi chat messages at once in quick succession.")]
         [DefaultValue(false)]
-        public bool MimicTwitchChat { get; set; } = true; 
+        public bool MimicTwitchChat { get; set; } = false; 
+        */
         
         [Category("Chat Messages")]
         [DisplayName("Use Ping SFX")]
@@ -85,6 +99,12 @@ namespace VinesauceModSettings.Configuration
         [Description("Disable this option for faster startup when not testing script edits.")]
         [DefaultValue(true)]
         public bool UseCustomScripts { get; set; } = true;
+
+        [Category("Debug")]
+        [DisplayName("Use Test Script on Startup")]
+        [Description("Loads edits from _1A_Testing.flow on Title Screen.")]
+        [DefaultValue(true)]
+        public bool LoadTestScriptOnTitle { get; set; } = false;
     }
 
     /// <summary>

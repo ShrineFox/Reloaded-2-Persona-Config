@@ -182,6 +182,24 @@ namespace VinesauceModSettings
                     _PakEmulator.AddDirectory($"{modDir}\\Mod Files\\Toggleable\\New Story\\Textures\\LooseBINs");
             }
 
+            // Config Option: Reskin Bosses
+
+            if (_configuration.NewBosses)
+            {
+                criFsApi.AddProbingPath($"{modDir}\\Mod Files\\Toggleable\\Bosses\\CPK");
+                _BfEmulator.AddDirectory($"{modDir}\\Mod Files\\Toggleable\\Bosses\\BF");
+                _BmdEmulator.AddDirectory($"{modDir}\\Mod Files\\Toggleable\\Bosses\\BMD");
+            }
+
+            // Config Option: Reskin Dungeons
+
+            if (_configuration.NewDungeons)
+            {
+                criFsApi.AddProbingPath($"{modDir}\\Mod Files\\Toggleable\\Dungeons\\CPK");
+                _BfEmulator.AddDirectory($"{modDir}\\Mod Files\\Toggleable\\Dungeons\\BF");
+                _BmdEmulator.AddDirectory($"{modDir}\\Mod Files\\Toggleable\\Dungeons\\BMD");
+            }
+
             // Config Option: Overwrite P5R Custom Bonus Tweaks config.toml
             try
             {
@@ -226,9 +244,14 @@ namespace VinesauceModSettings
             if (_configuration.UseSilencedBaseAWBs)
                 criFsApi.AddProbingPath($"{modDir}\\Mod Files\\Toggleable\\Silence");
 
+            // Config Option: Use Test Script on Startup
+            if (_configuration.LoadTestScriptOnTitle)
+                EditScript(modDir, true);
+            else
+                EditScript(modDir, false);
 
-            // ColorStuff by zarroboogs
-            IStartupScanner startupScanner;
+                // ColorStuff by zarroboogs
+                IStartupScanner startupScanner;
             _modLoader.GetController<IStartupScanner>().TryGetTarget(out startupScanner);
             SigScanHelper scanHelper = new SigScanHelper(_logger, startupScanner);
             _currentProcess = Process.GetCurrentProcess();
@@ -241,6 +264,28 @@ namespace VinesauceModSettings
                 ScanHelper = scanHelper
             };
             CmpBgColor.Activate(patchContext);
+        }
+
+        private void EditScript(string modDir, bool enable)
+        {
+            string titleScreenScript = Path.Combine(modDir, "Mod Files\\Toggleable\\New Story\\Scripts\\BF\\_CustomScripts\\DEBUG_TitleMenu.flow");
+            if (File.Exists(titleScreenScript))
+            {
+                var lines = File.ReadAllLines(titleScreenScript);
+                for (int i = 0; i < lines.Length; i++)
+                {
+                    if (lines[i].Contains("!Test_OnTitleLoad"))
+                    {
+                        if (enable)
+                            lines[i] = "\tif (!Test_OnTitleLoad(true))";
+                        else
+                            lines[i] = "\tif (!Test_OnTitleLoad(false))";
+                    }
+                }
+                string newLines = string.Join('\n', lines);
+                File.WriteAllText(titleScreenScript, newLines);
+                _logger.WriteLine($"Edited DEBUG_TitleMenu.flow to {(enable ? "enable" : "disable")} Test_OnTitleLoad script.", System.Drawing.Color.Green);
+            }
         }
 
         /* Mod loader actions. */

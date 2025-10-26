@@ -29,7 +29,8 @@ namespace VinesauceModSettings
                         string newLine = "";
                         int voiceClipIndex = 1;
                         newLine += $"\n[msg btl_support_0{navi_id}_{i + 1}]\n";
-                        if (_configuration.MimicTwitchChat)
+                        //if (_configuration.MimicTwitchChat)
+                        if (false)
                         {
                             for (int x = 0; x < 4; x++)
                             {

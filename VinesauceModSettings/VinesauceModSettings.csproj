@@ -49,12 +49,12 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\BGME\BGME.Framework.Interfaces\BGME.Framework.Interfaces.csproj" />
-    <ProjectReference Include="..\..\CriFs.V2.Hook.ReloadedII\Interfaces\CriFs.V2.Hook.Interfaces\CriFs.V2.Hook.Interfaces.csproj" />
-    <ProjectReference Include="..\..\FileEmulationFramework\Emulator\Interfaces\BF.File.Emulator.Interfaces\BF.File.Emulator.Interfaces.csproj" />
-    <ProjectReference Include="..\..\FileEmulationFramework\Emulator\Interfaces\BMD.File.Emulator.Interfaces\BMD.File.Emulator.Interfaces.csproj" />
-    <ProjectReference Include="..\..\FileEmulationFramework\Emulator\Interfaces\PAK.Stream.Emulator.Interfaces\PAK.Stream.Emulator.Interfaces.csproj" />
-    <ProjectReference Include="..\..\FileEmulationFramework\Emulator\Interfaces\SPD.File.Emulator.Interfaces\SPD.File.Emulator.Interfaces.csproj" />
+    <ProjectReference Include="..\..\..\Misc-Modding\Persona\BGME\BGME.Framework.Interfaces\BGME.Framework.Interfaces.csproj" />
+    <ProjectReference Include="..\..\..\Misc-Modding\Persona\CriFs.V2.Hook.ReloadedII\Interfaces\CriFs.V2.Hook.Interfaces\CriFs.V2.Hook.Interfaces.csproj" />
+    <ProjectReference Include="..\..\..\Misc-Modding\Persona\FileEmulationFramework\Emulator\Interfaces\BF.File.Emulator.Interfaces\BF.File.Emulator.Interfaces.csproj" />
+    <ProjectReference Include="..\..\..\Misc-Modding\Persona\FileEmulationFramework\Emulator\Interfaces\BMD.File.Emulator.Interfaces\BMD.File.Emulator.Interfaces.csproj" />
+    <ProjectReference Include="..\..\..\Misc-Modding\Persona\FileEmulationFramework\Emulator\Interfaces\PAK.Stream.Emulator.Interfaces\PAK.Stream.Emulator.Interfaces.csproj" />
+    <ProjectReference Include="..\..\..\Misc-Modding\Persona\FileEmulationFramework\Emulator\Interfaces\SPD.File.Emulator.Interfaces\SPD.File.Emulator.Interfaces.csproj" />
   </ItemGroup>
 
 </Project>
