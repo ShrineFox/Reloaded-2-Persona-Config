@@ -115,8 +115,8 @@ namespace VinesauceModSettings.Configuration
         [Category("Debug")]
         [DisplayName("Randomized Screen Effect Probability")]
         [Description("The higher the number, the less often jumpscares will happen.")]
-        [DefaultValue(10000)]
-        public int EPLEffectRate { get; set; } = 10000;
+        [DefaultValue(100000)]
+        public int EPLEffectRate { get; set; } = 100000;
     }
 
     /// <summary>

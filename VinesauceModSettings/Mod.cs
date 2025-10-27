@@ -4,6 +4,7 @@ using BMD.File.Emulator.Interfaces;
 using CriFs.V2.Hook.Interfaces;
 using Dolphin.ShadowTheHedgehog.RPC;
 using Newtonsoft.Json;
+using p5rpc.lib.interfaces;
 using P5RPC.ColorStuff.Patches;
 using P5RPC.ColorStuff.Patches.Common;
 using P5RPC.ColorStuff.Utilities;
@@ -482,6 +483,14 @@ namespace VinesauceModSettings
             }
             List<EPLEffect> eplEffects = JsonConvert.DeserializeObject<List<EPLEffect>>(File.ReadAllText(eplJson));
 
+            // Get access to P5R flow functions
+            var p5rLibController = _modLoader.GetController<IP5RLib>();
+            if (p5rLibController == null || !p5rLibController.TryGetTarget(out var p5rLib))
+            {
+                _logger.WriteLine($"Something in P5R Library shit its pants! Corruption level won't be detected properly.", System.Drawing.Color.Red);
+                return;
+            }
+
             while (true)
             {
                 if (watch.ElapsedMilliseconds < 1000)
@@ -494,8 +503,11 @@ namespace VinesauceModSettings
                 int number = random.Next(1, _configuration.EPLEffectRate);
                 //_logger.PrintMessage($"[{_modConfig.ModId}] Random Number: {number}", Color.Pink);
 
-                // TODO: Filter list by eplEffects where corruptLevel is less than or equal to current level
-                foreach (var eplEffect in eplEffects.OrderBy(a => random.Next()))
+                int corruptLvlCountID = 3;
+                int corruptionLevel = p5rLib.FlowCaller.GET_COUNT(3);
+
+                // Filter list by eplEffects where corruptLevel is less than or equal to current level
+                foreach (var eplEffect in eplEffects.Where(x => x.corruptLevel <= corruptionLevel).OrderBy(a => random.Next()))
                 {
                     if (number <= eplEffect.chance)
                     {
