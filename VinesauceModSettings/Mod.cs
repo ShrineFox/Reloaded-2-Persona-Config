@@ -3,6 +3,7 @@ using BGME.Framework.Interfaces;
 using BMD.File.Emulator.Interfaces;
 using CriFs.V2.Hook.Interfaces;
 using Dolphin.ShadowTheHedgehog.RPC;
+using Newtonsoft.Json;
 using P5RPC.ColorStuff.Patches;
 using P5RPC.ColorStuff.Patches.Common;
 using P5RPC.ColorStuff.Utilities;
@@ -206,6 +207,9 @@ namespace VinesauceModSettings
                 // Config Option: Emulate Unpacked Palace Textures
                 if (_configuration.EmulateTextures)
                     _PakEmulator.AddDirectory($"{modDir}\\Mod Files\\Toggleable\\New Story\\Textures\\LooseBINs");
+
+                // Random Corruption EPL Jumpscares CPK Dir
+                criFsApi.AddProbingPath($"{modDir}\\Mod Files\\Toggleable\\New Story\\Effects");
             }
 
             // Config Option: Reskin Bosses
@@ -295,6 +299,16 @@ namespace VinesauceModSettings
             /*
              * EPL STUFF - used to show randomized corruption effects
              */
+
+            // courtesy of Wisteria and NotAMitten's FNAF mod: https://gamebanana.com/mods/629637
+            // Original source code here: https://github.com/NM-20/P5RPC.Fnaf2
+
+            if (_configuration.DisableEPLEffects)
+            {
+                _logger.PrintMessage("Randomized Screen Effects disabled by user config.", Color.Red);
+                return;
+            }
+
             Process process = Process.GetCurrentProcess();
             using Scanner scanner = new Scanner(process);
             PatternScanResult addResult = scanner.FindPattern("48 89 5C 24 08 48 89 6C " +
@@ -458,13 +472,15 @@ namespace VinesauceModSettings
             while ((*_titleResProcInstance) is 0)
                 Thread.Yield();
 
-            List<EPLEffect> eplEffects = new List<EPLEffect>()
+            // Get list of EPLs
+            var modDir = _modLoader.GetDirectoryForModId(_modConfig.ModId);
+            string eplJson = $"{modDir}\\Mod Files\\Toggleable\\New Story\\Effects\\eplEffects.json";
+            if (!File.Exists(eplJson))
             {
-                new EPLEffect() { Name = "FNAF", systemCueID = 9801, eplID = 803, chance = 1, corruptLevel = 0 }
-            };
-
-
-            
+                _logger.PrintMessage($"[{_modConfig.ModId}] Could Not Load Randomized Effect List", Color.Red);
+                return;
+            }
+            List<EPLEffect> eplEffects = JsonConvert.DeserializeObject<List<EPLEffect>>(File.ReadAllText(eplJson));
 
             while (true)
             {
@@ -475,14 +491,13 @@ namespace VinesauceModSettings
                 if ((*_pauseScreenVisible))
                     continue;
 
-                /* Should be equivalent to a 1 in 10,000 chance. */
-                int number = random.Next(1, 10000);
+                int number = random.Next(1, _configuration.EPLEffectRate);
                 //_logger.PrintMessage($"[{_modConfig.ModId}] Random Number: {number}", Color.Pink);
 
                 // TODO: Filter list by eplEffects where corruptLevel is less than or equal to current level
                 foreach (var eplEffect in eplEffects.OrderBy(a => random.Next()))
                 {
-                    if (number > eplEffect.chance)
+                    if (number <= eplEffect.chance)
                     {
                         /* Jumpscare implementation. */
                         _logger.PrintMessage($"[{_modConfig.ModId}] Playing Effect: {eplEffect.Name}", Color.Pink);
@@ -507,10 +522,8 @@ namespace VinesauceModSettings
                 /* If the random number does not match the set beginning of the range, there
                    should not be a jumpscare. 
                 */
-                    watch.Restart();
-                    continue;
-
-                
+                watch.Restart();
+                continue;
             }
         }
 

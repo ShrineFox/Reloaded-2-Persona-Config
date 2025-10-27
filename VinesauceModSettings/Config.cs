@@ -46,7 +46,7 @@ namespace VinesauceModSettings.Configuration
         [Category("Chat Messages")]
         [DisplayName("Randomize Chat Messages")]
         [Description("Re-order navigator chat messages every time you launch the game.")]
-        [DefaultValue(false)]
+        [DefaultValue(true)]
         public bool RandomizeChatMsgs { get; set; } = true; 
 
         /*
@@ -103,8 +103,20 @@ namespace VinesauceModSettings.Configuration
         [Category("Debug")]
         [DisplayName("Use Test Script on Startup")]
         [Description("Loads edits from _1A_Testing.flow on Title Screen.")]
-        [DefaultValue(true)]
+        [DefaultValue(false)]
         public bool LoadTestScriptOnTitle { get; set; } = false;
+
+        [Category("Debug")]
+        [DisplayName("Disable Randomized Screen Effects")]
+        [Description("Use this to prevent jumpscares from happening.")]
+        [DefaultValue(false)]
+        public bool DisableEPLEffects { get; set; } = false;
+
+        [Category("Debug")]
+        [DisplayName("Randomized Screen Effect Probability")]
+        [Description("The higher the number, the less often jumpscares will happen.")]
+        [DefaultValue(10000)]
+        public int EPLEffectRate { get; set; } = 10000;
     }
 
     /// <summary>
