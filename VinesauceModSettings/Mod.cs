@@ -1,33 +1,51 @@
-﻿using System.Diagnostics;
-using YamlDotNet.Serialization.NamingConventions;
-using YamlDotNet.Serialization;
-using VinesauceModSettings.Template;
-using VinesauceModSettings.Configuration;
-using P5RPC.ColorStuff.Patches;
-using P5RPC.ColorStuff.Utilities;
-using P5RPC.ColorStuff.Patches.Common;
-using Reloaded.Hooks.ReloadedII.Interfaces;
-using Reloaded.Mod.Interfaces;
-using Reloaded.Memory.SigScan.ReloadedII.Interfaces;
-using Dolphin.ShadowTheHedgehog.RPC;
-using CriFs.V2.Hook.Interfaces;
-using PAK.Stream.Emulator.Interfaces;
-using BF.File.Emulator.Interfaces;
-using BMD.File.Emulator.Interfaces;
-using SPD.File.Emulator.Interfaces;
+﻿using BF.File.Emulator.Interfaces;
 using BGME.Framework.Interfaces;
+using BMD.File.Emulator.Interfaces;
+using CriFs.V2.Hook.Interfaces;
+using Dolphin.ShadowTheHedgehog.RPC;
+using P5RPC.ColorStuff.Patches;
+using P5RPC.ColorStuff.Patches.Common;
+using P5RPC.ColorStuff.Utilities;
+using PAK.Stream.Emulator.Interfaces;
+using Reloaded.Hooks.Definitions.X64;
+using Reloaded.Hooks.ReloadedII.Interfaces;
+using Reloaded.Memory.Sigscan;
+using Reloaded.Memory.Sigscan.Definitions.Structs;
+using Reloaded.Memory.SigScan.ReloadedII.Interfaces;
+using Reloaded.Mod.Interfaces;
+using SPD.File.Emulator.Interfaces;
+using System;
+using System.Diagnostics;
+using System.Drawing;
+using VinesauceModSettings.Configuration;
+using VinesauceModSettings.Template;
+using YamlDotNet.Serialization;
+using YamlDotNet.Serialization.NamingConventions;
 
 namespace VinesauceModSettings
 {
 	/// <summary>
 	/// Your mod logic goes here.
 	/// </summary>
-	public partial class Mod : ModBase // <= Do not Remove.
+	public unsafe partial class Mod : ModBase // <= Do not Remove.
 	{
-		/// <summary>
-		/// Provides access to the mod loader API.
-		/// </summary>
-		private readonly IModLoader _modLoader;
+        [Function(CallingConventions.Microsoft)]
+        private delegate void* AddMeshToGlobalAttachmentList(
+            void* param_1,
+            void* param_2, string? name, byte param_3);
+
+        [Function(CallingConventions.Microsoft)]
+        private delegate EPL* LoadEPLFromFilename(string param_1);
+
+        [Function(CallingConventions.Microsoft)]
+        private delegate void PlayFromSystemACB(int param_1);
+
+        [Function(CallingConventions.Microsoft)]
+        private delegate void RestartEPLPlayback(void* param_1);
+        /// <summary>
+        /// Provides access to the mod loader API.
+        /// </summary>
+        private readonly IModLoader _modLoader;
 	
 		/// <summary>
 		/// Provides access to the Reloaded.Hooks API.
@@ -57,6 +75,14 @@ namespace VinesauceModSettings
 
         private VinesauceRpc _vinesauceRpc;
         private readonly Process _currentProcess;
+
+        private readonly AddMeshToGlobalAttachmentList? _addMeshToGlobalAttachmentList;
+        private readonly bool* _pauseScreenVisible;
+        private readonly LoadEPLFromFilename? _loadEplFromFilename;
+        private readonly PlayFromSystemACB? _playFromSystemACB;
+        private readonly RestartEPLPlayback? _restartEplPlayback;
+        private readonly nuint* _titleResProcInstance;
+        private readonly void** _rootGfdGlobalScene;
 
         public Mod(ModContext context)
 		{
@@ -264,6 +290,228 @@ namespace VinesauceModSettings
                 ScanHelper = scanHelper
             };
             CmpBgColor.Activate(patchContext);
+
+
+            /*
+             * EPL STUFF - used to show randomized corruption effects
+             */
+            Process process = Process.GetCurrentProcess();
+            using Scanner scanner = new Scanner(process);
+            PatternScanResult addResult = scanner.FindPattern("48 89 5C 24 08 48 89 6C " +
+                "24 10 48 89 74 24 18 57 41 54 41 55 41 56 41 57 48 81 EC 20 01 00 00 45");
+
+            if (!addResult.Found)
+            {
+                _logger.PrintMessage(
+                  "Failed to locate `AddMeshToGlobalAttachmentList`! Randomized effects will not work...",
+                  Color.Red);
+
+                return;
+            }
+
+            _addMeshToGlobalAttachmentList = _hooks.CreateWrapper<AddMeshToGlobalAttachmentList>(
+                  (process.MainModule!.BaseAddress + addResult.Offset), out _);
+
+            PatternScanResult pauseResult = scanner.FindPattern("80 3D ?? ?? ?? ?? ?? 0F " +
+              "84 A1 00 00 00");
+
+            if (!pauseResult.Found)
+            {
+                _logger.PrintMessage(
+                  "Failed to locate `PauseScreenVisible`! Randomized effects will not work...",
+                  Color.Red);
+
+                return;
+            }
+
+            _pauseScreenVisible = (bool*)(CmpInstructionToAbsoluteAddress(
+              (byte*)(process.MainModule!.BaseAddress + pauseResult.Offset), 7));
+
+            PatternScanResult loadResult = scanner.FindPattern("48 89 5C 24 08 57 48 83 " +
+              "EC 60 48 8B D9 E8 ?? ?? ?? ?? 45 33 C9 45 33 C0 33 D2 48 8B CB 48 8B F8 81 48");
+
+            if (!loadResult.Found)
+            {
+                _logger.PrintMessage(
+                  "Failed to locate `LoadEPLFromFilename`! Randomized effects will not work...",
+                  Color.Red);
+
+                return;
+            }
+
+            _loadEplFromFilename = _hooks.CreateWrapper<LoadEPLFromFilename>(
+              (process.MainModule!.BaseAddress + loadResult.Offset), out _);
+
+            PatternScanResult playResult = scanner.FindPattern(
+              "40 53 48 83 EC 30 48 8B 1D ?? ?? ?? ?? 48 85 DB 74 25 8B 53 08 41");
+
+            if (!playResult.Found)
+            {
+                _logger.PrintMessage(
+                  "Failed to locate `PlayFromSystemACB`! Randomized effects will not work...",
+                  Color.Red);
+
+                return;
+            }
+
+            _playFromSystemACB = _hooks.CreateWrapper<PlayFromSystemACB>(
+              (process.MainModule!.BaseAddress + playResult.Offset), out _);
+
+            PatternScanResult deleteResult = scanner.FindPattern("48 89 6C 24 18 57 48 " +
+              "83 EC 20 48 8B 79 50");
+
+            if (!deleteResult.Found)
+            {
+                _logger.PrintMessage(
+                  "Failed to locate `RestartEPLPlayback`! Randomized effects will not work...",
+                  Color.Red);
+
+                return;
+            }
+
+            _restartEplPlayback = _hooks.CreateWrapper<RestartEPLPlayback>(
+              (process.MainModule!.BaseAddress + deleteResult.Offset), out _);
+
+            PatternScanResult titleResult = scanner.FindPattern("48 8B 0D ?? ?? ?? ?? 48 " +
+              "85 C9 74 0F 48 8B 41 48 66 44 39 78 02 0F 82 6B 07 00 00");
+
+            if (!titleResult.Found)
+            {
+                _logger.PrintMessage(
+                  "Failed to locate `TitleResProcInstance`! Randomized effects will not work...",
+                  Color.Red);
+
+                return;
+            }
+
+            _titleResProcInstance = (nuint*)(MovInstructionToAbsoluteAddress(
+              (byte*)(process.MainModule!.BaseAddress + titleResult.Offset), 7));
+
+            PatternScanResult rootResult = scanner.FindPattern("48 8B 0D ?? ?? ?? ?? 48 " +
+              "85 C9 74 05 E8 ?? ?? ?? ?? 48 8B 05");
+
+            if (!rootResult.Found)
+            {
+                _logger.PrintMessage(
+                  "Failed to locate `RootGfdGlobalScene`! Randomized effects will not work...",
+                  Color.Red);
+
+                return;
+            }
+
+            _rootGfdGlobalScene = (void**)(MovInstructionToAbsoluteAddress(
+              (byte*)(process.MainModule!.BaseAddress + rootResult.Offset), 7));
+
+            /* TODO: Look into a better way of executing code, potentially via a `Present`
+               hook?
+            */
+            Task.Factory.StartNew(TaskMain, null);
+        }
+
+        /* https://reloaded-project.github.io/Reloaded-II/CheatSheet/SignatureScanning/ */
+        private byte* CmpInstructionToAbsoluteAddress(byte* instructionAddress,
+          int instructionLength)
+        {
+            byte* nextInstructionAddress = instructionAddress + instructionLength;
+            var offset =
+              (*((uint*)(instructionAddress + 2)));
+            return (nextInstructionAddress + offset);
+        }
+
+        private byte* MovInstructionToAbsoluteAddress(byte* instructionAddress,
+          int instructionLength)
+        {
+            byte* nextInstructionAddress = instructionAddress + instructionLength;
+            var offset =
+              (*((uint*)(instructionAddress + 3)));
+            return (nextInstructionAddress + offset);
+        }
+
+        private bool HasEPLAnimationFinished(EPL* epl)
+        {
+            if ((epl->eplFlags & EPLFlags.LoopPlayback) is not 0)
+                return false;
+
+            if (epl->eplAnimation is null)
+                return true;
+
+            float duration;
+            if (epl->eplAnimation->eplAnimStart is null)
+                duration = epl->eplAnimation->Animation->Duration;
+            else
+                duration = epl->eplAnimation->eplAnimStart->Duration;
+
+            return (epl->timeElapsed >= duration);
+        }
+
+        private void TaskMain(object? state)
+        {
+            /* We have a guarantee that our state is not null, so we can directly cast it
+               to `IP5RLib`.
+            */
+            var parameters = (object[])(state!);
+
+            Stopwatch watch = Stopwatch.StartNew();
+            Random random = new();
+
+            /* Wait until we pass the initial loading screen before executing the loop. */
+            while ((*_titleResProcInstance) is 0)
+                Thread.Yield();
+
+            List<EPLEffect> eplEffects = new List<EPLEffect>()
+            {
+                new EPLEffect() { Name = "FNAF", systemCueID = 9801, eplID = 803, chance = 1, corruptLevel = 0 }
+            };
+
+
+            
+
+            while (true)
+            {
+                if (watch.ElapsedMilliseconds < 1000)
+                    continue;
+
+                /* Don't `Restart` the timer and instead postpone the `Random.Next` call. */
+                if ((*_pauseScreenVisible))
+                    continue;
+
+                /* Should be equivalent to a 1 in 10,000 chance. */
+                int number = random.Next(1, 10000);
+                //_logger.PrintMessage($"[{_modConfig.ModId}] Random Number: {number}", Color.Pink);
+
+                // TODO: Filter list by eplEffects where corruptLevel is less than or equal to current level
+                foreach (var eplEffect in eplEffects.OrderBy(a => random.Next()))
+                {
+                    if (number > eplEffect.chance)
+                    {
+                        /* Jumpscare implementation. */
+                        _logger.PrintMessage($"[{_modConfig.ModId}] Playing Effect: {eplEffect.Name}", Color.Pink);
+                        EPL* epl = _loadEplFromFilename!($"FIELD/EFFECT/BANK/FB{eplEffect.eplID.ToString("D3")}.EPL");
+                        void* mesh = null;
+
+                        if (mesh is null)
+                            mesh = _addMeshToGlobalAttachmentList!((*_rootGfdGlobalScene), epl, null, 0);
+
+                        _playFromSystemACB!(eplEffect.systemCueID);
+                        _restartEplPlayback!(epl);
+
+                        while (!HasEPLAnimationFinished(epl))
+                            Thread.Yield();
+
+                        /* Once one second has elapsed, we'll need to `Restart` to measure again. */
+                        watch.Restart();
+                        continue;
+                    }
+                }
+
+                /* If the random number does not match the set beginning of the range, there
+                   should not be a jumpscare. 
+                */
+                    watch.Restart();
+                    continue;
+
+                
+            }
         }
 
         private void EditScript(string modDir, bool enable)
@@ -389,6 +637,15 @@ namespace VinesauceModSettings
 #pragma warning restore CS8618
 	#endregion
 	}
+
+    public class EPLEffect
+    {
+        public string Name { get; set; } = "";
+        public int eplID { get; set; } = -1;
+        public int systemCueID { get; set; } = -1;
+        public int chance { get; set; } = -1;
+        public int corruptLevel { get; set; } = -1;
+    }
 
     public static class YamlSerializer
     {
