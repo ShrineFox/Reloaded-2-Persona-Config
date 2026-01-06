@@ -1,6 +1,6 @@
 ﻿using System.Diagnostics;
 
-namespace VinesauceModSettings.Template.Configuration
+namespace BorangeModSettings.Template.Configuration
 {
 	public class Utilities
 	{

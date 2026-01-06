@@ -1,7 +1,7 @@
 ﻿using Reloaded.Mod.Interfaces;
-using VinesauceModSettings.Configuration;
+using BorangeModSettings.Configuration;
 
-namespace VinesauceModSettings.Template.Configuration
+namespace BorangeModSettings.Template.Configuration
 {
 	public class Configurator : IConfiguratorV3
 	{

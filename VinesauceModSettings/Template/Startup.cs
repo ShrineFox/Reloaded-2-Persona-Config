@@ -3,13 +3,13 @@
  * to make it easier to upgrade to newer versions of the template.
 */
 
-using VinesauceModSettings.Configuration;
-using VinesauceModSettings.Template.Configuration;
+using BorangeModSettings.Configuration;
+using BorangeModSettings.Template.Configuration;
 using Reloaded.Hooks.ReloadedII.Interfaces;
 using Reloaded.Mod.Interfaces;
 using Reloaded.Mod.Interfaces.Internal;
 
-namespace VinesauceModSettings.Template
+namespace BorangeModSettings.Template
 {
 	public class Startup : IMod
 	{

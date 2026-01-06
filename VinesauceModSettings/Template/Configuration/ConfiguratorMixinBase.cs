@@ -1,7 +1,7 @@
-﻿using VinesauceModSettings.Configuration;
+﻿using BorangeModSettings.Configuration;
 using Reloaded.Mod.Interfaces;
 
-namespace VinesauceModSettings.Template.Configuration
+namespace BorangeModSettings.Template.Configuration
 {
 	/// <summary>
 	/// Creates the various different configurations used by the mod.

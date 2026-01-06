@@ -1,6 +1,6 @@
-﻿using VinesauceModSettings.Configuration;
+﻿using BorangeModSettings.Configuration;
 
-namespace VinesauceModSettings.Template
+namespace BorangeModSettings.Template
 {
 	/// <summary>
 	/// Base class for implementing mod functionality.

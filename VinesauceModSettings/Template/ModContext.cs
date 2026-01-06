@@ -1,8 +1,8 @@
-﻿using VinesauceModSettings.Configuration;
+﻿using BorangeModSettings.Configuration;
 using Reloaded.Mod.Interfaces;
 using IReloadedHooks = Reloaded.Hooks.ReloadedII.Interfaces.IReloadedHooks;
 
-namespace VinesauceModSettings.Template
+namespace BorangeModSettings.Template
 {
 	/// <summary>
 	/// Represents information passed in from the mod loader template to the implementing mod.

@@ -4,13 +4,13 @@ using System.Diagnostics;
 using System.IO.Pipes;
 using System.Text;
 using static NetDiscordRpc.DiscordRPC;
-using VinesauceModSettings;
+using BorangeModSettings;
 using NetDiscordRpc;
 using NetDiscordRpc.RPC;
 
 namespace Dolphin.ShadowTheHedgehog.RPC
 {
-    public class VinesauceRpc : IDisposable
+    public class BorangeRpc : IDisposable
     {
         private System.Threading.Timer _timer;
         private NetDiscordRpc.DiscordRPC _rpcClient;
@@ -19,7 +19,7 @@ namespace Dolphin.ShadowTheHedgehog.RPC
         private Timestamps _timestamps; 
 
         /* Initialization / Teardown */
-        public VinesauceRpc(Process process)
+        public BorangeRpc(Process process)
         {
             _rpcClient = new DiscordRPC("1283189895719813232");
             _rpcClient.Initialize();

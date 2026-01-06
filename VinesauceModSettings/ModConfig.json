@@ -1,20 +1,20 @@
 {
-  "ModId": "p5rpc.vinesauce",
-  "ModName": "Vinny Vinesauce",
+  "ModId": "p5rpc.borange",
+  "ModName": "Playable Aki (OrangeIsBorange)",
   "ModAuthor": "ShrineFox",
   "ModVersion": "1.0.0",
-  "ModDescription": "SPEEN!",
-  "ModDll": "VinesauceModSettings.dll",
-  "ModIcon": "binyot.png",
-  "ModR2RManagedDll32": "x86/VinesauceModSettings.dll",
-  "ModR2RManagedDll64": "x64/VinesauceModSettings.dll",
+  "ModDescription": "Play as your favorite Shiba VTuber in P5R!",
+  "ModDll": "BorangeModSettings.dll",
+  "ModIcon": "borange.png",
+  "ModR2RManagedDll32": "x86/BorangeModSettings.dll",
+  "ModR2RManagedDll64": "x64/BorangeModSettings.dll",
   "ModNativeDll32": "",
   "ModNativeDll64": "",
   "Tags": [],
   "CanUnload": false,
   "HasExports": false,
   "IsLibrary": false,
-  "ReleaseMetadataFileName": "p5rpc.vinesauce.ReleaseMetadata.json",
+  "ReleaseMetadataFileName": "p5rpc.borange.ReleaseMetadata.json",
   "PluginData": {
     "GitHubDependencies": {
       "IdToConfigMap": {
@@ -225,5 +225,5 @@
   "SupportedAppId": [
     "p5r.exe"
   ],
-  "ProjectUrl": "https://shrinefox.com/vinesauce"
+  "ProjectUrl": "https://shrinefox.com/borange"
 }
