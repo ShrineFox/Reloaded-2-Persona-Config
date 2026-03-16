@@ -100,6 +100,30 @@ namespace VinesauceModSettings.Configuration
         [DefaultValue(true)]
         public bool UseCustomScripts { get; set; } = true;
 
+        [Category("Sound")]
+        [DisplayName("Use Custom Voices")]
+        [Description("Use randomized voice replacements. Disable to use vanilla P5R sound for faster startup.")]
+        [DefaultValue(true)]
+        public bool UseCustomVoices { get; set; } = true;
+
+        [Category("Sound")]
+        [DisplayName("Use Custom BGM")]
+        [Description("Use randomized music replacements. Disable to use vanilla P5R sound for faster startup.")]
+        [DefaultValue(true)]
+        public bool UseCustomBGM { get; set; } = true;
+
+        [Category("Debug")]
+        [DisplayName("Force Copy Custom BGM")]
+        [Description("Delete existing music replacements and re-generate from DefaultMusic.json at startup.")]
+        [DefaultValue(false)]
+        public bool ForceCopyCustomBGM { get; set; } = false;
+
+        [Category("Debug")]
+        [DisplayName("Use Custom UI")]
+        [Description("Disable this option for faster startup when not testing UI edits.")]
+        [DefaultValue(true)]
+        public bool UseCustomUI { get; set; } = true;
+
         [Category("Debug")]
         [DisplayName("Use Test Script on Startup")]
         [Description("Loads edits from _1A_Testing.flow on Title Screen.")]

@@ -56,6 +56,7 @@
     <ProjectReference Include="..\..\..\Misc-Modding\Persona\FileEmulationFramework\Emulator\Interfaces\BMD.File.Emulator.Interfaces\BMD.File.Emulator.Interfaces.csproj" />
     <ProjectReference Include="..\..\..\Misc-Modding\Persona\FileEmulationFramework\Emulator\Interfaces\PAK.Stream.Emulator.Interfaces\PAK.Stream.Emulator.Interfaces.csproj" />
     <ProjectReference Include="..\..\..\Misc-Modding\Persona\FileEmulationFramework\Emulator\Interfaces\SPD.File.Emulator.Interfaces\SPD.File.Emulator.Interfaces.csproj" />
+    <ProjectReference Include="..\..\..\Misc-Modding\Persona\Ryo\Ryo.Interfaces\Ryo.Interfaces.csproj" />
   </ItemGroup>
 
 </Project>

@@ -23,6 +23,8 @@ using VinesauceModSettings.Configuration;
 using VinesauceModSettings.Template;
 using YamlDotNet.Serialization;
 using YamlDotNet.Serialization.NamingConventions;
+using Ryo.Interfaces;
+using Ryo.Interfaces.Classes;
 
 namespace VinesauceModSettings
 {
@@ -114,14 +116,18 @@ namespace VinesauceModSettings
 				return;
             }
 
-            /*
             var RyoApi = _modLoader.GetController<IRyoApi>();
             if (RyoApi == null || !RyoApi.TryGetTarget(out var _RyoApi))
             {
                 _logger.WriteLine($"Something in Ryo shit its pants! Randomized voice/sfx audio will not load properly!", System.Drawing.Color.Red);
                 return;
             }
-            */
+
+            if (_configuration.UseCustomBGM)
+            {
+                GenerateBGMReplacements();
+                CreatePMEFiles();
+            }
 
             var PakEmulatorController = _modLoader.GetController<IPakEmulator>();
             if (PakEmulatorController == null || !PakEmulatorController.TryGetTarget(out var _PakEmulator))
@@ -164,7 +170,8 @@ namespace VinesauceModSettings
             criFsApi.AddProbingPath($"{modDir}\\Mod Files\\Main\\_Personas");
             criFsApi.AddProbingPath($"{modDir}\\Mod Files\\Main\\_Fields");
             criFsApi.AddProbingPath($"{modDir}\\Mod Files\\Main\\_Tables");
-            criFsApi.AddProbingPath($"{modDir}\\Mod Files\\Main\\_UI");
+            if (_configuration.UseCustomUI)
+                criFsApi.AddProbingPath($"{modDir}\\Mod Files\\Main\\_UI");
             _BGME.AddFolder($"{modDir}\\Mod Files\\Main\\BGME");
             _BfEmulator.AddDirectory($"{modDir}\\Mod Files\\Main\\BF");
             _BmdEmulator.AddDirectory($"{modDir}\\Mod Files\\Main\\BMD");
@@ -243,33 +250,18 @@ namespace VinesauceModSettings
                 _logger.WriteLine($"Failed to update P5RCBT config.toml, could not locate Persona 5 Royal Custom Bonus Tweaks mod.", System.Drawing.Color.Red);
             }
 
-            // Config Option: Emulate ACB Files
-            /*
-            if (_configuration.UseEmulatedACBs)
-                foreach (string yamlPath in Directory.GetFiles($"{modDir}\\Mod Files\\Main\\ACB", "*.yaml", SearchOption.AllDirectories))
-                {
-                    var audioConfig = ParseConfigFile(yamlPath, _logger);
-                    if (string.IsNullOrEmpty(audioConfig.AcbName))
-                        audioConfig.AcbName = Path.GetFileName(FindAcbFolder(yamlPath)).Replace(".ACB", "").Replace(".acb", "");
-                    if (audioConfig.UsePlayerVolume == null)
-                        audioConfig.UsePlayerVolume = true;
-                    if (audioConfig.PlayerId == null)
-                        audioConfig.PlayerId = -1;
-                    if (audioConfig.IsEnabled == null)
-                        audioConfig.IsEnabled = true;
-                    if (audioConfig.CategoryIds == null)
-                        audioConfig.CategoryIds = new int[] { 3 };
-                    if (audioConfig.VolumeCategoryId == null)
-                        audioConfig.VolumeCategoryId = 3;
-                    if (audioConfig.PlaybackMode == null)
-                        audioConfig.PlaybackMode = Ryo.Interfaces.Enums.PlaybackMode.Random;
-                    audioConfig.Apply(audioConfig);
-                    _RyoApi.AddAudioPath(Path.GetDirectoryName(yamlPath), audioConfig);
 
-                    string jsonText = JsonConvert.SerializeObject(audioConfig, Newtonsoft.Json.Formatting.Indented);
-                    _logger.WriteLine($"{Path.GetDirectoryName(yamlPath)}\r\n{jsonText}", System.Drawing.Color.AliceBlue);
+            // Config Option: Emulate ACB Files
+            if (_configuration.UseCustomVoices)
+                foreach (var dir in Directory.GetDirectories($"{modDir}\\Mod Files\\Main\\ACB\\Voices"))
+                {
+                    _RyoApi.AddAudioFolder(dir);
                 }
-            */
+            if (_configuration.UseCustomBGM)
+                foreach (var dir in Directory.GetDirectories($"{modDir}\\Mod Files\\Main\\ACB\\BGM"))
+                {
+                    _RyoApi.AddAudioFolder(dir);
+                }
 
             // Config Option: Use Silenced Base AWB files
             if (_configuration.UseSilencedBaseAWBs)
@@ -421,6 +413,180 @@ namespace VinesauceModSettings
                hook?
             */
             Task.Factory.StartNew(TaskMain, null);
+        }
+
+        private void CreatePMEFiles()
+        {
+            var modDir = _modLoader.GetDirectoryForModId(_modConfig.ModId);
+            string jsonPath = Path.GetFullPath(Path.Combine(modDir, ".//DefaultMusic.json"));
+
+            if (File.Exists(jsonPath))
+            {
+                _logger.WriteLine($"Creating PME Files for Battle BGM...", Color.Tan);
+
+                string json = File.ReadAllText(jsonPath);
+                Project currentProject = JsonConvert.DeserializeObject<Project>(json);
+
+                List<string> costumeNames = currentProject.Destinations
+                    .Where(x => x.CueID > -1)
+                    .Select(x => x.CostumeName)
+                    .Distinct()
+                    .ToList();
+
+                foreach (var costume in costumeNames)
+                {
+                    string pmePath = $"{modDir}\\Costumes\\Joker\\{costume}\\music.pme";
+
+                    if (File.Exists(pmePath) && !_configuration.ForceCopyCustomBGM)
+                        continue;
+
+                    var normalBattleIDs = string.Join(",", currentProject.Destinations
+                        .Where(x => x.CueID > -1 && x.CostumeName == costume && x.NormalBattle)
+                        .Select(x => x.CueID.ToString())
+                        .ToList());
+
+                    var ambusshBattleIDs = string.Join(",", currentProject.Destinations
+                        .Where(x => x.CueID > -1 && x.CostumeName == costume && x.AmbushBattle)
+                        .Select(x => x.CueID.ToString())
+                        .ToList());
+
+                    var pinchBattleIDs = string.Join(",", currentProject.Destinations
+                        .Where(x => x.CueID > -1 && x.CostumeName == costume && x.PinchBattle)
+                        .Select(x => x.CueID.ToString())
+                        .ToList());
+
+                    var talkBattleIDs = string.Join(",", currentProject.Destinations
+                        .Where(x => x.CueID > -1 && x.CostumeName == costume && x.BattleTalk)
+                        .Select(x => x.CueID.ToString())
+                        .ToList());
+
+                    var victoryBattleIDs = string.Join(",", currentProject.Destinations
+                        .Where(x => x.CueID > -1 && x.CostumeName == costume && x.BattleVictory)
+                        .Select(x => x.CueID.ToString())
+                        .ToList());
+
+                    string pmeText = "";
+
+                    if (normalBattleIDs.Length > 0)
+                        pmeText += $"\r\nconst NormalBGMArray = [{normalBattleIDs}]" +
+                            $"\r\nconst NormalBGM = random_song( NormalBGMArray )";
+                    else
+                        pmeText += "\r\nconst NormalBGM = 300";
+
+                    if (ambusshBattleIDs.Length > 0)
+                        pmeText += $"\r\nconst AmbushBGMArray = [{ambusshBattleIDs}]" +
+                            $"\r\nconst AmbushBGM = random_song( AmbushBGMArray )";
+                    else
+                        pmeText += "\r\nconst AmbushBGM = 907";
+
+                    if (pinchBattleIDs.Length > 0)
+                        pmeText += $"\r\nconst PinchBGMArray = [{pinchBattleIDs}]" +
+                            $"\r\nconst PinchBGM = random_song( PinchBGMArray )";
+                    else
+                        pmeText += "\r\nconst PinchBGM = 920";
+
+                    if (talkBattleIDs.Length > 0)
+                        pmeText += $"\r\nconst TalkBGMArray = [{talkBattleIDs}]" +
+                            $"\r\nconst TalkBGM = random_song( TalkBGMArray )" +
+                            $"\r\n" +
+                            $"\r\nglobal_bgm[341]:" +
+                            $"\r\n  music = TalkBGM" +
+                            $"\r\nend";
+
+                    if (victoryBattleIDs.Length > 0)
+                        pmeText += $"\r\nconst VictoryBGMArray = [{victoryBattleIDs}]" +
+                            $"\r\nconst VictoryBGM = random_song( VictoryBGMArray )" +
+                            $"\r\n" +
+                            $"\r\nglobal_bgm[340]:" +
+                            $"\r\n  music = VictoryBGM" +
+                            $"\r\nend";
+
+                    if (!string.IsNullOrEmpty(pmeText))
+                    {
+                        File.WriteAllText(pmePath, pmeText);
+                        _logger.WriteLine($"Created PME for {costume}", Color.Tan);
+                    }
+                }
+            }
+        }
+
+        private void GenerateBGMReplacements()
+        {
+            var modDir = _modLoader.GetDirectoryForModId(_modConfig.ModId);
+
+            string jsonPath = Path.GetFullPath(Path.Combine(modDir, ".//DefaultMusic.json"));
+            string bgmDir = Path.GetFullPath(Path.Combine(modDir, ".//Mod Files\\Main\\ACB\\BGM"));
+
+            if (File.Exists(jsonPath))
+            {
+                _logger.WriteLine($"Loading DefaultMusic.json", Color.Tan);
+
+                string json = File.ReadAllText(jsonPath);
+                Project currentProject = JsonConvert.DeserializeObject<Project>(json);
+
+                if (!Directory.Exists(bgmDir) || _configuration.ForceCopyCustomBGM)
+                {
+                    _logger.WriteLine($"Copying Replacement BGM Files to their destinations...", Color.Tan);
+
+                    if (Directory.Exists(bgmDir) && _configuration.ForceCopyCustomBGM)
+                        Directory.Delete(bgmDir, true);
+
+                    foreach (var destination in currentProject.Destinations.Where(x => x.CueID > -1))
+                    {
+                        //_logger.WriteLine($"Destination: {destination.Name}", Color.Tan);
+
+                        foreach (var collection in currentProject.Collections)
+                        {
+                            var matchingSongs = collection.Songs.Where(song => song.DestinationIDs.Any(id => id.Equals(destination.InternalID)));
+                            //_logger.WriteLine($"\tMatches: {matchingSongs.Count()}", Color.Tan);
+
+                            foreach (var song in matchingSongs)
+                            {
+                                string songPath = Path.Combine(modDir, song.Path);
+
+                                if (File.Exists(songPath))
+                                {
+                                    string acbName = "BGM";
+                                    if (destination.CueID > 61000)
+                                    {
+                                        acbName = "BGM_42";
+                                    }
+
+                                    /*
+                                    _logger.WriteLine($"\tAcb: {acbName}, Cue: {destination.CueID}, File: {song.Path}, Dest: {destination.Name}", Color.Tan);
+                                    var conf = new AudioConfig() { CategoryIds = new int[] { 1 }, Volume = 1f, AcbName = acbName, PlayerId = -1, CueName = $"{destination.CueID}", PlaybackMode = Ryo.Interfaces.Enums.PlaybackMode.Random, AudioFilePath = song.Path, IsEnabled = true, UsePlayerVolume = true  };
+                                    conf.Apply(conf);
+                                    _RyoApi.AddAudioPath(song.Path, conf);
+                                    */
+
+                                    /*
+                                    int cueID = destination.CueID;
+                                    if (acbName == "BGM_42")
+                                        destination.CueID += 10000;
+                                    */
+
+                                    string outPath = $"{bgmDir}\\{acbName}.ACB\\{destination.CueID}.cue_{destination.Name.Replace("?","")}\\{Path.GetFileName(song.Path)}";
+                                    Directory.CreateDirectory(Path.GetDirectoryName(outPath));
+
+                                    string configPath = Path.Combine(Path.GetDirectoryName(outPath), "config.yaml");
+                                    File.WriteAllText(configPath, 
+                                        $"cue_name: '{destination.CueID}'\r\nplayer_id: -1\r\ncategory_ids: [1]\r\nuse_player_volume: true");
+
+                                    File.Copy(songPath, outPath, true);
+                                }
+                                else
+                                {
+                                    _logger.WriteLine($"\tFile not found: {songPath}", Color.Red);
+                                }
+                            }
+
+                        }
+                    }
+                    _logger.WriteLine($"Done copying replacement music files.", Color.Green);
+                }
+            }
+            else
+                _logger.WriteLine($"Could not load file: {jsonPath}", Color.Red);
         }
 
         /* https://reloaded-project.github.io/Reloaded-II/CheatSheet/SignatureScanning/ */
@@ -605,13 +771,13 @@ namespace VinesauceModSettings
             _logger.WriteLine($"Updated P5RCBT config.toml and Config.json using Vinesauce Mod settings.", System.Drawing.Color.Green);
         }
 
-        /*
+        
         private static AudioConfig? ParseConfigFile(string configFile, ILogger _logger)
         {
             try
             {
                 _logger.WriteLine($"Loading audio config: {configFile}");
-                var config = YamlSerializer.DeserializeFile<AudioConfig>(configFile);
+                AudioConfig config = YamlSerializer.DeserializeFile<AudioConfig>(configFile);
                 return config;
             }
             catch (Exception ex)
@@ -643,7 +809,7 @@ namespace VinesauceModSettings
 
             return null;
         }
-        */
+        
 
         #region Standard Overrides
         public override void ConfigurationUpdated(Config configuration)
@@ -680,6 +846,58 @@ namespace VinesauceModSettings
 
         public static T DeserializeFile<T>(string filePath)
             => deserializer.Deserialize<T>(File.ReadAllText(filePath));
+    }
+
+    public class Project
+    {
+        [JsonProperty(ObjectCreationHandling = ObjectCreationHandling.Replace)]
+        public List<SongCollection> Collections { get; set; } = new List<SongCollection>();
+        [JsonProperty(ObjectCreationHandling = ObjectCreationHandling.Replace)]
+        public List<Destination> Destinations { get; set; } = new List<Destination>();
+    }
+
+    public class SongCollection
+    {
+        [JsonProperty(ObjectCreationHandling = ObjectCreationHandling.Replace)]
+        public string Name { get; set; } = "";
+        [JsonProperty(ObjectCreationHandling = ObjectCreationHandling.Replace)]
+        public string Path { get; set; } = "";
+        [JsonProperty(ObjectCreationHandling = ObjectCreationHandling.Replace)]
+        public List<Song> Songs { get; set; } = new List<Song>();
+    }
+
+    public class Song
+    {
+        [JsonProperty(ObjectCreationHandling = ObjectCreationHandling.Replace)]
+        public string Name { get; set; } = "";
+        [JsonProperty(ObjectCreationHandling = ObjectCreationHandling.Replace)]
+        public string Path { get; set; } = "";
+        [JsonProperty(ObjectCreationHandling = ObjectCreationHandling.Replace)]
+        public List<int> DestinationIDs { get; set; } = new List<int>();
+    }
+
+    public class Destination
+    {
+        [JsonProperty(ObjectCreationHandling = ObjectCreationHandling.Replace)]
+        public int InternalID { get; set; } = 0;
+        [JsonProperty(ObjectCreationHandling = ObjectCreationHandling.Replace)]
+        public string Name { get; set; } = "";
+        [JsonProperty(ObjectCreationHandling = ObjectCreationHandling.Replace)]
+        public string CostumeName { get; set; } = "";
+        [JsonProperty(ObjectCreationHandling = ObjectCreationHandling.Replace)]
+        public int CueID { get; set; } = -1;
+        [JsonProperty(ObjectCreationHandling = ObjectCreationHandling.Replace)]
+        public int WaveID { get; set; } = -1;
+        [JsonProperty(ObjectCreationHandling = ObjectCreationHandling.Replace)]
+        public bool NormalBattle { get; set; } = false;
+        [JsonProperty(ObjectCreationHandling = ObjectCreationHandling.Replace)]
+        public bool AmbushBattle { get; set; } = false;
+        [JsonProperty(ObjectCreationHandling = ObjectCreationHandling.Replace)]
+        public bool PinchBattle { get; set; } = false;
+        [JsonProperty(ObjectCreationHandling = ObjectCreationHandling.Replace)]
+        public bool BattleTalk { get; set; } = false;
+        [JsonProperty(ObjectCreationHandling = ObjectCreationHandling.Replace)]
+        public bool BattleVictory { get; set; } = false;
     }
 
 }
