@@ -471,27 +471,24 @@ namespace VinesauceModSettings
                         pmeText += $"\r\nconst NormalBGMArray = [{normalBattleIDs}]" +
                             $"\r\nconst NormalBGM = random_song( NormalBGMArray )";
                     else
-                        pmeText += "\r\nconst NormalBGM = 300";
+                        pmeText += "\r\nconst NormalBGM = 10300";
 
                     if (ambusshBattleIDs.Length > 0)
                         pmeText += $"\r\nconst AmbushBGMArray = [{ambusshBattleIDs}]" +
                             $"\r\nconst AmbushBGM = random_song( AmbushBGMArray )";
                     else
-                        pmeText += "\r\nconst AmbushBGM = 907";
+                        pmeText += "\r\nconst AmbushBGM = 10907";
 
                     if (pinchBattleIDs.Length > 0)
                         pmeText += $"\r\nconst PinchBGMArray = [{pinchBattleIDs}]" +
                             $"\r\nconst PinchBGM = random_song( PinchBGMArray )";
                     else
-                        pmeText += "\r\nconst PinchBGM = 920";
+                        pmeText += "\r\nconst PinchBGM = 10920";
 
-                    if (talkBattleIDs.Length > 0)
-                        pmeText += $"\r\nconst TalkBGMArray = [{talkBattleIDs}]" +
-                            $"\r\nconst TalkBGM = random_song( TalkBGMArray )" +
-                            $"\r\n" +
-                            $"\r\nglobal_bgm[341]:" +
-                            $"\r\n  music = TalkBGM" +
-                            $"\r\nend";
+                    pmeText += $"\r\nencounter[\"Normal Battles\"]:" +
+                        "\r\n  music = battle_bgm(NormalBGM, AmbushBGM, PinchBGM)" +
+                        "\r\nend";
+
 
                     if (victoryBattleIDs.Length > 0)
                         pmeText += $"\r\nconst VictoryBGMArray = [{victoryBattleIDs}]" +
@@ -499,6 +496,14 @@ namespace VinesauceModSettings
                             $"\r\n" +
                             $"\r\nglobal_bgm[340]:" +
                             $"\r\n  music = VictoryBGM" +
+                            $"\r\nend";
+
+                    if (talkBattleIDs.Length > 0)
+                        pmeText += $"\r\nconst TalkBGMArray = [{talkBattleIDs}]" +
+                            $"\r\nconst TalkBGM = random_song( TalkBGMArray )" +
+                            $"\r\n" +
+                            $"\r\nglobal_bgm[341]:" +
+                            $"\r\n  music = TalkBGM" +
                             $"\r\nend";
 
                     if (!string.IsNullOrEmpty(pmeText))
@@ -551,19 +556,6 @@ namespace VinesauceModSettings
                                     {
                                         acbName = "BGM_42";
                                     }
-
-                                    /*
-                                    _logger.WriteLine($"\tAcb: {acbName}, Cue: {destination.CueID}, File: {song.Path}, Dest: {destination.Name}", Color.Tan);
-                                    var conf = new AudioConfig() { CategoryIds = new int[] { 1 }, Volume = 1f, AcbName = acbName, PlayerId = -1, CueName = $"{destination.CueID}", PlaybackMode = Ryo.Interfaces.Enums.PlaybackMode.Random, AudioFilePath = song.Path, IsEnabled = true, UsePlayerVolume = true  };
-                                    conf.Apply(conf);
-                                    _RyoApi.AddAudioPath(song.Path, conf);
-                                    */
-
-                                    /*
-                                    int cueID = destination.CueID;
-                                    if (acbName == "BGM_42")
-                                        destination.CueID += 10000;
-                                    */
 
                                     string outPath = $"{bgmDir}\\{acbName}.ACB\\{destination.CueID}.cue_{destination.Name.Replace("?","")}\\{Path.GetFileName(song.Path)}";
                                     Directory.CreateDirectory(Path.GetDirectoryName(outPath));
