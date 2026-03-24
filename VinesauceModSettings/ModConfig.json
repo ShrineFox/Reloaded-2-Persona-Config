@@ -15,6 +15,14 @@
   "HasExports": false,
   "IsLibrary": false,
   "ReleaseMetadataFileName": "p5rpc.vinesauce.ReleaseMetadata.json",
+  "IgnoreRegexes": [
+    ".*\\.json"
+  ],
+  "IncludeRegexes": [
+    "\\.deps\\.json",
+    "\\.runtimeconfig\\.json",
+    "ModConfig\\.json"
+  ],
   "PluginData": {
     "GitHubDependencies": {
       "IdToConfigMap": {
@@ -219,7 +227,8 @@
     "reloaded.universal.fileemulationframework.bmd",
     "reloaded.universal.fileemulationframework.pak",
     "reloaded.universal.fileemulationframework.spd",
-    "Ryo.Reloaded"
+    "Ryo.Reloaded",
+    "p5rpc.patch.forcejokername"
   ],
   "OptionalDependencies": [],
   "SupportedAppId": [

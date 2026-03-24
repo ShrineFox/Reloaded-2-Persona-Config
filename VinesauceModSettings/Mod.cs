@@ -242,8 +242,13 @@ namespace VinesauceModSettings
             try
             {
                 var cbtDir = _modLoader.GetDirectoryForModId("p5r.enhance.cbt");
+                var nameDir = _modLoader.GetDirectoryForModId("p5rpc.patch.forcejokername");
+
                 if (_configuration.OverwriteP5RCBTConfig)
+                {
                     CopyP5RCBTConfig(modDir, cbtDir);
+                    OverwriteCustomNameConfig(nameDir);
+                }
             }
             catch
             {
@@ -751,19 +756,28 @@ namespace VinesauceModSettings
                 $"reloadConfigPath: {destReloadConfigPath}\n" +
                 $"destReloadConfigPath: {cbtTomlConfig}\n", System.Drawing.Color.Yellow);
 
-            if (!File.Exists(cbtReloadConfig))
-                _logger.WriteLine($"Couldn't find cbtReloadConfig path: {cbtReloadConfig}", System.Drawing.Color.Red);
-            if (!File.Exists(destReloadConfigPath))
-                _logger.WriteLine($"Couldn't find destReloadConfigPath path: {destReloadConfigPath}", System.Drawing.Color.Red);
-
+            Directory.CreateDirectory(Path.GetDirectoryName(cbtReloadConfig));
             Directory.CreateDirectory(reloadConfigDir);
+
             File.Copy(cbtTomlConfig, destTomlPath, true);
             File.Copy(cbtReloadConfig, destReloadConfigPath, true);
 
             _logger.WriteLine($"Updated P5RCBT config.toml and Config.json using Vinesauce Mod settings.", System.Drawing.Color.Green);
         }
 
-        
+        private void OverwriteCustomNameConfig(string nameDir)
+        {
+            string destConfPath = Path.Combine(nameDir, "Config.json");
+            string destConfDir = Path.GetDirectoryName(destConfPath);
+            string confText = "{\r\n  \"ForcedFirstName\": \"Vinny\",\r\n  \"ForcedLastName\": \"Vinesauce\"\r\n}";
+
+            Directory.CreateDirectory(destConfDir);
+            File.WriteAllText(destConfPath, confText);
+
+            _logger.WriteLine(confText, System.Drawing.Color.Yellow);
+        }
+
+
         private static AudioConfig? ParseConfigFile(string configFile, ILogger _logger)
         {
             try
